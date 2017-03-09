@@ -1,5 +1,7 @@
 /_build
 /cover
 /deps
+/obj
+/priv
 erl_crash.dump
 *.ez

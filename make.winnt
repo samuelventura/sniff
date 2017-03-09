@@ -1,0 +1,11 @@
+TARGET	= priv/sniff.dll
+SOURCES = src/sniff_win32.c src/sniff.c
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCES)
+	cl /W4 /LD /MD /Foobj/ /Fe$(TARGET) $(SOURCES)
+
+clean:
+	del /q obj\*
+	del /q priv\*
