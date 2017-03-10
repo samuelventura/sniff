@@ -26,6 +26,10 @@ Elixir Serial Port NIF.
 - [x] Ubuntu 16.04 64 and Windows 10 Pro 64 support
 - [x] Extract baud nif branch to its own repo
 
+## Development
+
+- Use clang-format atom package
+
 ## Research
 
 - Support udoo neo
