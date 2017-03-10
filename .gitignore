@@ -3,5 +3,6 @@
 /deps
 /obj
 /priv
+/doc
 erl_crash.dump
 *.ez
