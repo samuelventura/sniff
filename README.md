@@ -2,7 +2,10 @@
 
 Elixir Serial Port NIF.
 
-**Notice:** sniff focuses in the native interface to serial ports. For high level serial port access see [baud](https://github.com/samuelventura/baud).
+**Notice:** sniff focuses in the native interface to serial ports. 
+
+- For high level serial port access see [baud](https://github.com/samuelventura/baud).
+- For modbus TCP see [modbus](https://github.com/samuelventura/modbus).
 
 ## Installation and Usage
 
