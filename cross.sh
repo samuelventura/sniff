@@ -2,7 +2,7 @@
 
 PROJECT="sniff"
 HOSTS="192.168.1.180"
-FILES="lib src test mix.* make.* *.sh *.bat"
+FILES="lib src test mix.* make.* *.bat"
 
 for HOST in $HOSTS; do
   ssh $HOST mkdir -p .cross/$PROJECT
