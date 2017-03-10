@@ -16,6 +16,10 @@ Elixir Serial Port NIF.
 
 ## Roadmap
 
+0.1.1
+
+- [ ] Make cross.sh work on Windows 10/cygwin
+
 0.1.0
 
 - [x] Drop mac target until stable serial ports
