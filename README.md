@@ -2,6 +2,8 @@
 
 Elixir Serial Port NIF.
 
+**Notice:** sniff focuses in the native interface to serial ports. For high level serial port access see [baud](https://github.com/samuelventura/baud).
+
 ## Installation and Usage
 
   1. Add `sniff` to your list of dependencies in `mix.exs`:
