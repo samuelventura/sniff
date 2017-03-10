@@ -3,8 +3,8 @@ defmodule Sniff.CrudTest do
   alias Sniff.TTY
 
   test "crud test" do
-    tty0 = TTY.name 1
-    tty1 = TTY.name 2
+    tty0 = TTY.name 0
+    tty1 = TTY.name 1
     {:ok, nid0} = Sniff.open tty0, 115200, "8N1"
     {:ok, nid1} = Sniff.open tty1, 115200, "8N1"
     :ok = Sniff.write nid0, "echo"

@@ -12,4 +12,12 @@ Elixir Serial Port NIF.
     end
     ```
 
+  **build.bat** documents the required Windows build tools.
+
 ## Roadmap
+
+0.1.0
+
+- [x] Drop mac target until stable serial ports.
+- [x] Ubuntu 16.04 and Windows 10 support
+- [x] Extract baud nif branch to its own repo

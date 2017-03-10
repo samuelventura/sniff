@@ -1,5 +1,5 @@
 TARGET	= priv/sniff.dll
-SOURCES = src/sniff_win32.c src/sniff.c
+SOURCES = src/sniff_winnt.c src/sniff.c
 
 all: $(TARGET)
 
