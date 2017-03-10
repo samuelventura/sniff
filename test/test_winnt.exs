@@ -3,8 +3,8 @@ defmodule Sniff.TTY do
 
   def name(id) do
     case id do
-      0 -> "ttyS5"
-      1 -> "ttyS6"
+      0 -> "COM14"
+      1 -> "COM16"
     end
   end
 
