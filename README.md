@@ -31,3 +31,9 @@ Elixir Serial Port NIF.
 - Support udoo neo
 - Support beaglebone black
 - Support raspberry pi 3 B
+- Bypass the 0.1s minimum granularity on posix systems
+- Higher baud rates support for posix and win32
+- DTR/RTS control and CTS/DSR monitoring
+- Unit test 8N1 7E1 7O1 and baud rate setup against a confirmed gauge
+- Posix async and Windows overlapped
+- Buffer discarding
