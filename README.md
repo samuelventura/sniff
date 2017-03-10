@@ -19,5 +19,5 @@ Elixir Serial Port NIF.
 0.1.0
 
 - [x] Drop mac target until stable serial ports.
-- [x] Ubuntu 16.04 and Windows 10 support
+- [x] Ubuntu 16.04 64 and Windows 10 Pro 64 support
 - [x] Extract baud nif branch to its own repo
