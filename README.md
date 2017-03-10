@@ -25,3 +25,9 @@ Elixir Serial Port NIF.
 - [x] Drop mac target until stable serial ports
 - [x] Ubuntu 16.04 64 and Windows 10 Pro 64 support
 - [x] Extract baud nif branch to its own repo
+
+## Research
+
+- Support udoo neo
+- Support beaglebone black
+- Support raspberry pi 3 B
