@@ -36,7 +36,7 @@ defmodule Sniff.Mixfile do
   end
 
   defp description do
-    "Elixir Serial Port NIF."
+    "Elixir Serial Port NIF"
   end
 
   defp package do

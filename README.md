@@ -1,6 +1,6 @@
 # sniff
 
-Elixir Serial Port NIF.
+Elixir Serial Port NIF
 
 **Notice:** sniff focuses in the native interface to serial ports. For high level serial port access see [baud](https://github.com/samuelventura/baud).
 
@@ -14,13 +14,12 @@ Elixir Serial Port NIF.
     end
     ```
 
-  **build.bat** documents the required Windows build tools.
-
 ## Roadmap
 
 0.1.1
 
-- [ ] Make cross.sh work on Windows 10/cygwin
+- [ ] Ensure farm.sh handles local.hex --force
+- [x] Make farm.sh work on Windows 10 Pro/cygwin
 
 0.1.0
 
@@ -30,7 +29,12 @@ Elixir Serial Port NIF.
 
 ## Development
 
+- **build.bat** documents the required Windows build setup
 - Use clang-format atom package
+- Test agains the build server farm with:
+```bash
+./farm.sh remote
+```
 
 ## Research
 
