@@ -20,6 +20,7 @@ Elixir Serial Port NIF
 
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
+- [ ] Cleanup windows compilation warnings
 - [x] Automatic test against Ubuntu 16 & Windows 10
 
 0.1.0
