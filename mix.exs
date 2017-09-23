@@ -3,9 +3,21 @@ defmodule Mix.Tasks.Compile.Nif do
     case :os.type() do
       {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin")
       {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux")
-      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("build")
+      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("build " <> include())
     end
     :ok
+  end
+
+  def include() do
+    Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version), 'include'])
+    |> replace_path_separator
+  end
+
+  def replace_path_separator(path) do
+    case :os.type() do
+      {:win32, :nt} -> String.replace(path, "/", "\\")
+      _ -> path
+    end
   end
 end
 
@@ -14,7 +26,7 @@ defmodule Sniff.Mixfile do
 
   def project do
     [app: :sniff,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.3",
      compilers: [:nif | Mix.compilers],
      build_embedded: Mix.env == :prod,

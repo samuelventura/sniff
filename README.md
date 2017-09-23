@@ -10,17 +10,21 @@ Elixir Serial Port NIF
 
   ```elixir
   def deps do
-    [{:sniff, "~> 0.1.0"}]
+    [{:sniff, "~> 0.1.1"}]
   end
   ```
 
 ## Roadmap
 
-0.1.1
+0.1.2
 
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
+
+0.1.1
+
+- [x] Tests pass on a clean Windows 10 VM (see build.bat)
 - [x] Automatic test against Ubuntu 16 & Windows 10
 
 0.1.0
@@ -31,9 +35,10 @@ Elixir Serial Port NIF
 
 ## Development
 
-- **build.bat** documents the required Windows build setup
 - Use clang-format atom package
-- Test agains the build server farm with:
+- **build.bat** documents the required Windows build setup
+- Testing requires two null modem serial ports configured in test/test_${OSNAME}.exs
+- Test against the build server farm with:
 ```bash
 ./farm.sh remote
 ```
