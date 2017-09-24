@@ -26,7 +26,7 @@ defmodule Sniff.Mixfile do
 
   def project do
     [app: :sniff,
-     version: "0.1.1",
+     version: "0.1.2",
      elixir: "~> 1.3",
      compilers: [:nif | Mix.compilers],
      build_embedded: Mix.env == :prod,
@@ -54,7 +54,7 @@ defmodule Sniff.Mixfile do
   defp package do
     [
      name: :sniff,
-     files: ["lib", "src", "test", "mix.*", "make.*", "*.sh", "*.bat", "*.md", ".gitignore", "LICENSE"],
+     files: ["priv/.gitignore", "lib", "src", "test", "mix.*", "make.*", "*.sh", "*.bat", "*.md", ".gitignore", "LICENSE"],
      maintainers: ["Samuel Ventura"],
      licenses: ["Apache 2.0"],
      links: %{"GitHub" => "https://github.com/samuelventura/sniff/"}]

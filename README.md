@@ -10,17 +10,21 @@ Elixir Serial Port NIF
 
   ```elixir
   def deps do
-    [{:sniff, "~> 0.1.1"}]
+    [{:sniff, "~> 0.1.2"}]
   end
   ```
 
 ## Roadmap
 
-0.1.2
+0.1.3
 
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
+
+0.1.2
+
+- [x] Empty priv is committed and included in hex package so that native libraries get copied to \_build when compiled as dependency
 
 0.1.1
 
