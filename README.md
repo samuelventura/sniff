@@ -42,6 +42,7 @@ Future
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
+- [ ] Pass test serial port thru environment variables
 - [ ] Requirements to migrate to elixir_make:
     - Allow using a different make file for each unix platform
     - Pass the BUILD_PATH to the makefile
