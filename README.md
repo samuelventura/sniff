@@ -10,7 +10,7 @@ Elixir Serial Port NIF
 
   ```elixir
   def deps do
-    [{:sniff, "~> 0.1.3"}]
+    [{:sniff, "~> 0.1.4"}]
   end
   ```
 
@@ -37,7 +37,7 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
 
 ## Roadmap
 
-0.1.4
+Future
 
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
@@ -46,6 +46,10 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
     - Allow using a different make file for each unix platform
     - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
+
+0.1.4
+
+- [x] Handle spaces in Windows build path
 
 0.1.3
 

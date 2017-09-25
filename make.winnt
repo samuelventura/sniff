@@ -1,6 +1,6 @@
 !INCLUDE env.tmp
 TARGET	= priv\sniff.dll
-BUILD	= $(BUILD_PATH)\lib\sniff\$(TARGET)
+BUILD	= "$(BUILD_PATH)\lib\sniff\$(TARGET)"
 SOURCES = src\sniff_winnt.c src\sniff.c
 
 all: $(BUILD)
@@ -13,4 +13,3 @@ $(BUILD): $(TARGET)
 
 clean:
 	del /q priv\sniff*.*
-	
