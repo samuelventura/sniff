@@ -38,9 +38,6 @@ From the Windows run command exec `cmd /K c:\Users\samuel\Documents\github\sniff
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
-- [ ] Document Windows dependencies
-- [ ] BAT to launch windows dev environment
-- [ ] Pass the ERTS_HOME to unix makefiles
 - [ ] Patch elixir_make to:
     - Allow using a different make file for each unix platform
     - Pass the ERTS_HOME to the makefile
@@ -48,6 +45,12 @@ From the Windows run command exec `cmd /K c:\Users\samuel\Documents\github\sniff
 
 0.1.3
 
+- [.] Pass the ERTS_HOME to unix makefiles
+    - Tested on Mac
+- [x] Document Windows dependencies
+- [-] BAT to launch windows dev environment
+    - A bat to call env.bat and cd back to code folder is provided
+    - must be executed from Windows run command (no double click)
 - [x] Ensure native library can be loaded on first compile
     - First deps.get && compile works fine
     - Second compile works fine

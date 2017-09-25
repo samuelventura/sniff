@@ -1,5 +1,5 @@
-ERLANG_H = $(shell erl -eval 'io:format("~s", [lists:concat([code:root_dir(), "/erts-", erlang:system_info(version), "/include"])])' -s init stop -noshell)
-CFLAGS = -fPIC -std=c99 -D_GNU_SOURCE -pedantic-errors -Wall -Wextra -I$(ERLANG_H)
+include env.tmp
+CFLAGS = -fPIC -std=c99 -D_GNU_SOURCE -pedantic-errors -Wall -Wextra -I$(ERTS_HOME)/include
 LFLAGS = -shared -dynamiclib -undefined dynamic_lookup
 UNAME := $(shell uname)
 SRCDIR   = src
