@@ -33,7 +33,7 @@ From the Windows run command launch `cmd /K c:\Users\samuel\Documents\github\sni
 
 ## Ubuntu
 
-Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`.
+Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Follow the official Elixir installation instructions and install `build-essential erlang-dev` as well.
 
 ## Roadmap
 
