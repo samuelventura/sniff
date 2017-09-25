@@ -44,8 +44,8 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
 - [ ] Cleanup windows compilation warnings
 - [ ] Requirements to migrate to elixir_make:
     - Allow using a different make file for each unix platform
+    - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
-    - Pass the MIX_ENV to the makefile
 
 0.1.3
 
