@@ -20,7 +20,7 @@ defmodule Mix.Tasks.Compile.Nif do
   end
 
   defp generate_env() do
-    build = Mix.Project.build_path()
+    build = Mix.Project.build_path() |> fix_path_separator
     erts = Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version)])
       |> fix_path_separator
     :ok = File.write "env.tmp", "BUILD_PATH=#{build}\nERTS_HOME=#{erts}"
