@@ -3,7 +3,7 @@ defmodule Sniff.ErrorTest do
   alias Sniff.TTY
 
   test "error test" do
-    tty0 = TTY.name 0
+    tty0 = TTY.tty0
     {:er, 'Argument 0 is not a binary'} = Sniff.open nil, nil, nil
     {:er, 'Invalid device'} = Sniff.open bin(256), nil, nil
     {:er, 'Argument 1 is not an integer'} = Sniff.open "", nil, nil

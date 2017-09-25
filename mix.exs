@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Compile.Nif do
   def run(_) do
-    erts = Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version)])
-      |> fix_path_separator
-    :ok = File.write "env.tmp", "MIX_ENV=#{Mix.env}\nERTS_HOME=#{erts}"
+    generate_env()
     case :os.type() do
       {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin")
       {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux")
@@ -12,12 +10,19 @@ defmodule Mix.Tasks.Compile.Nif do
   end
 
   def clean() do
+    generate_env()
     case :os.type() do
       {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin clean")
       {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux clean")
       {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt clean")
     end
     :ok
+  end
+
+  defp generate_env() do
+    erts = Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version)])
+      |> fix_path_separator
+    :ok = File.write "env.tmp", "MIX_ENV=#{Mix.env}\nERTS_HOME=#{erts}"
   end
 
   defp fix_path_separator(path) do

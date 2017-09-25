@@ -4,8 +4,8 @@ defmodule Sniff.LeakTest do
 
   #Ensure nothing leaks
   test "leak test" do
-    tty0 = TTY.name 0
-    tty1 = TTY.name 1
+    tty0 = TTY.tty0
+    tty1 = TTY.tty1
     parent = self()
     pid = spawn(fn ->
       receive do

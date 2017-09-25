@@ -4,7 +4,7 @@ defmodule Sniff.KillTest do
 
   #Ensure resource is auto closed on process normal exit
   test "kill test" do
-    tty0 = TTY.name 0
+    tty0 = TTY.tty0
     pid = spawn(fn ->
       {:ok, _} = Sniff.open tty0, 115200, "8N1"
       receive do

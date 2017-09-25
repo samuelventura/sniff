@@ -16,8 +16,8 @@ Elixir Serial Port NIF
 
 ## Development
 
+  - Testing requires two null modem serial ports configured in `test/test_helper.exs`
   - Use clang-format atom package to format C code
-  - Testing requires two null modem serial ports configured in test/test_${OSNAME}.exs
   - Test against the build server farm with:
   ```bash
   ./farm.sh remote
@@ -49,11 +49,8 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`.
 
 0.1.3
 
-- [x] Pass the ERTS_HOME to unix makefiles
-    - Tested on Mac
-    - Tested on Ubuntu
 - [x] Document Windows dependencies
-- [-] BAT to launch windows dev environment
+- [x] BAT to launch windows dev environment
     - A bat to call env.bat and cd back to code folder is provided
     - must be executed from Windows run command (no double click)
 - [x] Ensure native library can be loaded on first compile
@@ -61,8 +58,11 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`.
     - Second compile works fine
     - clean && compile fails to load NIF library
 - [x] Ensure native library can be loaded from IEX
+  - Tested on OSXElCapitan/Ubuntu16.10/Windows10
 - [x] Ensure native library can be loaded when used as dependency from IEX
-  - Tested on Mac
+  - Tested on OSXElCapitan/Ubuntu16.10/Windows10
+- [x] Pass the ERTS_HOME to unix makefiles
+    - Tested on OSXElCapitan/Ubuntu16.10/Windows10
 
 0.1.2
 
