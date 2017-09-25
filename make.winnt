@@ -6,11 +6,10 @@ SOURCES = src\sniff_winnt.c src\sniff.c
 all: $(BUILD)
 
 $(TARGET): $(SOURCES)
-	cl /W4 /LD /MD /I"$(ERTS_HOME)\INCLUDE" /Foobj/ /Fe$(TARGET) $(SOURCES)
+	cl /W4 /LD /MD /I"$(ERTS_HOME)\INCLUDE" /Fopriv/ /Fe$(TARGET) $(SOURCES)
 
 $(BUILD): $(TARGET)
 	copy $(TARGET) $(BUILD)
 
 clean:
-	del /q obj\*
-	del /q priv\sniff.*
+	del /q priv\sniff*.*
