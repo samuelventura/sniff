@@ -29,7 +29,11 @@ Install `Visual C++ 2015 Build Tools` by one of the following methods:
 - Download and install [visualcppbuildtools_full.exe](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 - Thru [Chocolatey](https://chocolatey.org/) `choco install VisualCppBuildTools`.
 
-From the Windows run command exec `cmd /K c:\Users\samuel\Documents\github\sniff\setenv.bat` adjusting your code location accordingly.
+From the Windows run command launch `cmd /K c:\Users\samuel\Documents\github\sniff\setenv.bat` adjusting your code location accordingly.
+
+## Ubuntu
+
+Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`.
 
 ## Roadmap
 
@@ -38,15 +42,16 @@ From the Windows run command exec `cmd /K c:\Users\samuel\Documents\github\sniff
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
-- [ ] Patch elixir_make to:
+- [ ] Requirements to migrate to elixir_make:
     - Allow using a different make file for each unix platform
     - Pass the ERTS_HOME to the makefile
     - Pass the MIX_ENV to the makefile
 
 0.1.3
 
-- [.] Pass the ERTS_HOME to unix makefiles
+- [x] Pass the ERTS_HOME to unix makefiles
     - Tested on Mac
+    - Tested on Ubuntu
 - [x] Document Windows dependencies
 - [-] BAT to launch windows dev environment
     - A bat to call env.bat and cd back to code folder is provided
@@ -56,7 +61,8 @@ From the Windows run command exec `cmd /K c:\Users\samuel\Documents\github\sniff
     - Second compile works fine
     - clean && compile fails to load NIF library
 - [x] Ensure native library can be loaded from IEX
-- [ ] Ensure native library can be loaded when used as dependency from IEX
+- [x] Ensure native library can be loaded when used as dependency from IEX
+  - Tested on Mac
 
 0.1.2
 
