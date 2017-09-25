@@ -1,19 +1,26 @@
 defmodule Mix.Tasks.Compile.Nif do
   def run(_) do
+    erts = Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version)])
+      |> fix_path_separator
+    :ok = File.write "env.tmp", "MIX_ENV=#{Mix.env}\nERTS_HOME=#{erts}"
     case :os.type() do
       {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin")
       {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux")
-      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("build " <> include())
+      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt")
     end
     :ok
   end
 
-  def include() do
-    Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version), 'include'])
-    |> replace_path_separator
+  def clean() do
+    case :os.type() do
+      {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin clean")
+      {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux clean")
+      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt clean")
+    end
+    :ok
   end
 
-  def replace_path_separator(path) do
+  defp fix_path_separator(path) do
     case :os.type() do
       {:win32, :nt} -> String.replace(path, "/", "\\")
       _ -> path
@@ -26,7 +33,7 @@ defmodule Sniff.Mixfile do
 
   def project do
     [app: :sniff,
-     version: "0.1.2",
+     version: "0.1.3",
      elixir: "~> 1.3",
      compilers: [:nif | Mix.compilers],
      build_embedded: Mix.env == :prod,
@@ -54,7 +61,7 @@ defmodule Sniff.Mixfile do
   defp package do
     [
      name: :sniff,
-     files: ["priv/.gitignore", "lib", "src", "test", "mix.*", "make.*", "*.sh", "*.bat", "*.md", ".gitignore", "LICENSE"],
+     files: ["priv/.gitignore", "lib", "src", "test", "mix.*", "make.*", "*.exs", "*.sh", "*.bat", "*.md", ".gitignore", "LICENSE"],
      maintainers: ["Samuel Ventura"],
      licenses: ["Apache 2.0"],
      links: %{"GitHub" => "https://github.com/samuelventura/sniff/"}]

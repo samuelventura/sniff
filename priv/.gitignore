@@ -1,3 +1,2 @@
-#Keep empty priv folder so that native libraries get copied to _build
 *
 !.gitignore

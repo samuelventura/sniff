@@ -3,6 +3,7 @@
 /deps
 /doc
 /obj
-erl_crash.dump
+*.dump
 *.ez
+*.tmp
 *.tar
