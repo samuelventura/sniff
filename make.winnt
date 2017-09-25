@@ -13,4 +13,4 @@ $(BUILD): $(TARGET)
 
 clean:
 	del /q obj\*
-	del /q priv\*
+	del /q priv\sniff.*
