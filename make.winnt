@@ -1,15 +1,11 @@
 !INCLUDE env.tmp
 TARGET	= priv\sniff.dll
-BUILD	= _build\$(MIX_ENV)\lib\sniff\$(TARGET)
 SOURCES = src\sniff_winnt.c src\sniff.c
 
-all: $(BUILD)
+all: $(TARGET)
 
 $(TARGET): $(SOURCES)
 	cl /W4 /LD /MD /I"$(ERTS_HOME)\INCLUDE" /Fopriv/ /Fe$(TARGET) $(SOURCES)
-
-$(BUILD): $(TARGET)
-	copy $(TARGET) $(BUILD)
 
 clean:
 	del /q priv\sniff*.*
