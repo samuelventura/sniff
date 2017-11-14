@@ -1,5 +1,6 @@
 defmodule Sniff do
 
+  @compile {:autoload, false}
   @on_load :init
 
   def init() do
