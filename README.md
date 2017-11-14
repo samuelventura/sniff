@@ -39,6 +39,7 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
 
 Future
 
+- [ ] Binary distro to shield dependants from devenv setup
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
