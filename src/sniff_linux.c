@@ -16,14 +16,10 @@ int serial_baud(int speed) {
     case 1800: return B1800;
     case 2400: return B2400;
     case 4800: return B4800;
-    case 7200: return B7200;
     case 9600: return B9600;
-    case 14400: return B14400;
     case 19200: return B19200;
-    case 28800: return B28800;
     case 38400: return B38400;
     case 57600: return B57600;
-    case 76800: return B76800;
     case 115200: return B115200;
     case 230400: return B230400;
     case 460800: return B460800;
