@@ -14,6 +14,7 @@
 #include <termios.h>
 #define COUNT int
 #define PADSIZE 5 //  /dev/
+int serial_baud(int speed);
 #endif
 
 typedef struct BAUD_RESOURCE {

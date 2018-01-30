@@ -41,70 +41,10 @@ void serial_open(BAUD_RESOURCE *res, int speed) {
   fdt.c_iflag &= ~(IXON | IXOFF | IXANY);
   fdt.c_oflag &= ~OPOST;
 
-  // BAUDRATE
-  if (speed == 1200) {
-    cfsetispeed(&fdt, B1200);
-    cfsetospeed(&fdt, B1200);
-  } else if (speed == 2400) {
-    cfsetispeed(&fdt, B2400);
-    cfsetospeed(&fdt, B2400);
-  } else if (speed == 4800) {
-    cfsetispeed(&fdt, B4800);
-    cfsetospeed(&fdt, B4800);
-  } else if (speed == 9600) {
-    cfsetispeed(&fdt, B9600);
-    cfsetospeed(&fdt, B9600);
-  } else if (speed == 19200) {
-    cfsetispeed(&fdt, B19200);
-    cfsetospeed(&fdt, B19200);
-  } else if (speed == 38400) {
-    cfsetispeed(&fdt, B38400);
-    cfsetospeed(&fdt, B38400);
-  } else if (speed == 57600) {
-    cfsetispeed(&fdt, B57600);
-    cfsetospeed(&fdt, B57600);
-  } else if (speed == 115200) {
-    cfsetispeed(&fdt, B115200);
-    cfsetospeed(&fdt, B115200);
-  } else if (speed == 230400) {
-    cfsetispeed(&fdt, B230400);
-    cfsetospeed(&fdt, B230400);
-  } else if (speed == 460800) {
-    cfsetispeed(&fdt, B460800);
-    cfsetospeed(&fdt, B460800);
-  } else if (speed == 500000) {
-    cfsetispeed(&fdt, B500000);
-    cfsetospeed(&fdt, B500000);
-  } else if (speed == 576000) {
-    cfsetispeed(&fdt, B576000);
-    cfsetospeed(&fdt, B576000);
-  } else if (speed == 921600) {
-    cfsetispeed(&fdt, B921600);
-    cfsetospeed(&fdt, B921600);
-  } else if (speed == 1000000) {
-    cfsetispeed(&fdt, B1000000);
-    cfsetospeed(&fdt, B1000000);
-  } else if (speed == 1152000) {
-    cfsetispeed(&fdt, B1152000);
-    cfsetospeed(&fdt, B1152000);
-  } else if (speed == 1500000) {
-    cfsetispeed(&fdt, B1500000);
-    cfsetospeed(&fdt, B1500000);
-  } else if (speed == 2000000) {
-    cfsetispeed(&fdt, B2000000);
-    cfsetospeed(&fdt, B2000000);
-  } else if (speed == 2500000) {
-    cfsetispeed(&fdt, B2500000);
-    cfsetospeed(&fdt, B2500000);
-  } else if (speed == 3000000) {
-    cfsetispeed(&fdt, B3000000);
-    cfsetospeed(&fdt, B3000000);
-  } else if (speed == 3500000) {
-    cfsetispeed(&fdt, B3500000);
-    cfsetospeed(&fdt, B3500000);
-  } else if (speed == 4000000) {
-    cfsetispeed(&fdt, B4000000);
-    cfsetospeed(&fdt, B4000000);
+  int baud = serial_baud(speed);
+  if (baud > 0) {
+    cfsetispeed(&fdt, baud);
+    cfsetospeed(&fdt, baud);
   } else {
     res->error = "Invalid speed";
     return;
