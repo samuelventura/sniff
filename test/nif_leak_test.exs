@@ -3,6 +3,7 @@ defmodule Sniff.LeakTest do
   alias Sniff.TTY
 
   #Ensure nothing leaks
+  #UPDATE: this test wont detect a enif_alloc_binary leak!
   test "leak test" do
     tty0 = TTY.tty0
     tty1 = TTY.tty1

@@ -4,7 +4,11 @@ defmodule Sniff do
   @on_load :init
 
   def init() do
-    nif = :code.priv_dir(:sniff) ++ '/sniff'
+    nif = case :os.type() do
+      {:unix, :darwin} -> :code.priv_dir(:sniff) ++ '/sniff_darwin'
+      {:unix, :linux} -> :code.priv_dir(:sniff) ++ '/sniff_linux'
+      {:win32, :nt} -> :code.priv_dir(:sniff) ++ '/sniff_winnt'
+    end
     :erlang.load_nif(nif, 0)
   end
 

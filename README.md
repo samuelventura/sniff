@@ -35,6 +35,10 @@ From the Windows run command launch `cmd /K c:\Users\samuel\Documents\github\sni
 
 Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Follow the official Elixir installation instructions and install `build-essential erlang-dev` as well.
 
+## MacOS
+
+No support provided other than ensuring compilation and basic interactive testing. 
+
 ## Roadmap
 
 Future
@@ -48,6 +52,9 @@ Future
     - Allow using a different make file for each unix platform
     - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
+
+- [x] Fixed binary leak when serial_read fails
+- [x] Separated darwin and linux baudrate files
 
 0.1.4
 
