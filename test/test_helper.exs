@@ -8,7 +8,7 @@ defmodule Sniff.TTY do
     case :os.type() do
       {:unix, :darwin} -> "tty.usbserial-AH01F28Y"
       {:unix, :linux} -> "ttyUSB0"
-      {:win32, :nt} -> "COM5"
+      {:win32, :nt} -> "COM10"
     end
   end
 
@@ -16,7 +16,7 @@ defmodule Sniff.TTY do
     case :os.type() do
       {:unix, :darwin} -> "tty.usbserial-AH01F28Z"
       {:unix, :linux} -> "ttyUSB1"
-      {:win32, :nt} -> "COM6"
+      {:win32, :nt} -> "COM11"
     end
   end
 
