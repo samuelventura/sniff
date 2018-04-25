@@ -6,7 +6,9 @@ defmodule Mix.Tasks.Compile.Nif do
       {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux")
       {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt")
     end
-    :ok
+
+    # ensure that generated files are copied to build directory
+    :ok = Mix.Project.build_structure()
   end
 
   def clean() do
