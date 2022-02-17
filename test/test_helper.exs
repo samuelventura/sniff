@@ -1,5 +1,5 @@
 defmodule Sniff.TTY do
-  # A couple of null modem serial ports needed
+  # couple of null modem serial ports needed
   def tty0() do
     case :os.type() do
       {:unix, :darwin} -> find("tty.usbserial-", 0)

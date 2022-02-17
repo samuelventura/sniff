@@ -17,7 +17,7 @@
 int serial_baud(int speed);
 #endif
 
-typedef struct BAUD_RESOURCE {
+typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
   #else
@@ -28,13 +28,14 @@ typedef struct BAUD_RESOURCE {
   char path[MAXPATH + 1];
   char device[MAXPATH + 1];
   char config[3 + 1];
-} BAUD_RESOURCE;
+} SNIFF_RESOURCE;
 
-void serial_open(BAUD_RESOURCE *res, int speed);
-void serial_close(BAUD_RESOURCE *res);
-void serial_release(BAUD_RESOURCE *res);
-void serial_available(BAUD_RESOURCE *res);
-void serial_read(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size);
-void serial_write(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size);
+void serial_open(SNIFF_RESOURCE *res, int speed);
+void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags);
+void serial_close(SNIFF_RESOURCE *res);
+void serial_release(SNIFF_RESOURCE *res);
+void serial_available(SNIFF_RESOURCE *res);
+void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
+void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
 
 #endif

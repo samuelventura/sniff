@@ -11,7 +11,7 @@ ERL_NIF_TERM atom_er;
 void release_resource(ErlNifEnv *env, void *obj) {
   UNUSED(env);
 
-  BAUD_RESOURCE *res = obj;
+  SNIFF_RESOURCE *res = obj;
 
   serial_close(res);
 }
@@ -99,8 +99,8 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc,
     return enif_make_tuple2(
         env, atom_er, enif_make_string(env, "Invalid config", ERL_NIF_LATIN1));
   }
-  BAUD_RESOURCE *res =
-      (BAUD_RESOURCE *)enif_alloc_resource(RES_TYPE, sizeof(BAUD_RESOURCE));
+  SNIFF_RESOURCE *res =
+      (SNIFF_RESOURCE *)enif_alloc_resource(RES_TYPE, sizeof(SNIFF_RESOURCE));
   if (res == NULL) {
     return enif_raise_exception(
         env,
@@ -130,7 +130,7 @@ static ERL_NIF_TERM nif_read(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Invalid argument count", ERL_NIF_LATIN1));
   }
-  BAUD_RESOURCE *res = NULL;
+  SNIFF_RESOURCE *res = NULL;
   if (!enif_get_resource(env, argv[0], RES_TYPE, (void **)&res)) {
     return enif_make_tuple2(
         env, atom_er,
@@ -164,7 +164,7 @@ static ERL_NIF_TERM nif_write(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Invalid argument count", ERL_NIF_LATIN1));
   }
-  BAUD_RESOURCE *res = NULL;
+  SNIFF_RESOURCE *res = NULL;
   if (!enif_get_resource(env, argv[0], RES_TYPE, (void **)&res)) {
     return enif_make_tuple2(
         env, atom_er,
@@ -191,7 +191,7 @@ static ERL_NIF_TERM nif_close(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Invalid argument count", ERL_NIF_LATIN1));
   }
-  BAUD_RESOURCE *res = NULL;
+  SNIFF_RESOURCE *res = NULL;
   if (!enif_get_resource(env, argv[0], RES_TYPE, (void **)&res)) {
     return enif_make_tuple2(
         env, atom_er,

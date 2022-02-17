@@ -1,5 +1,10 @@
 #include "sniff.h"
 #include <termios.h>
+#include <fcntl.h>
+
+void serial_open(SNIFF_RESOURCE *res, int speed) {
+  serial_open_flags(res, speed, O_RDWR | O_NOCTTY);
+}
 
 int serial_baud(int speed) {
 
@@ -36,5 +41,4 @@ int serial_baud(int speed) {
     case 4000000: return B4000000;
     default: return -1;
   }
-
 }

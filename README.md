@@ -38,6 +38,11 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
 
 No support provided other than ensuring compilation and basic interactive testing. 
 
+```bash
+sudo dseditgroup -o edit -a samuel -t user admin
+sudo dseditgroup -o edit -a samuel -t user wheel
+```
+
 ## Roadmap
 
 Future
@@ -54,6 +59,8 @@ Future
 
 0.1.5
 
+- [x] Added O_NONBLOCK for MacOS file open.
+- [x] Tests confirmed to pass on linux.
 - [x] Upgraded ex_doc to compile with latest elixir
 - [x] Test serial port names detection on unixes
 - [x] Fixed binary leak when serial_read fails

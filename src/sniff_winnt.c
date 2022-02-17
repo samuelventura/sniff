@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <windows.h>
 
-void serial_open(BAUD_RESOURCE *res, int speed) {
+void serial_open(SNIFF_RESOURCE *res, int speed) {
   res->error = NULL;
   DCB dcb;
   FillMemory(&dcb, sizeof(dcb), 0);
@@ -88,7 +88,7 @@ void serial_open(BAUD_RESOURCE *res, int speed) {
   }
 }
 
-void serial_available(BAUD_RESOURCE *res) {
+void serial_available(SNIFF_RESOURCE *res) {
   res->error = NULL;
   COMSTAT baudStat;
 
@@ -100,7 +100,7 @@ void serial_available(BAUD_RESOURCE *res) {
   res->count = baudStat.cbInQue;
 }
 
-void serial_read(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
+void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->error = NULL;
   DWORD count = 0;
 
@@ -117,7 +117,7 @@ void serial_read(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->count = count;
 }
 
-void serial_write(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
+void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->error = NULL;
   DWORD count = 0;
 
@@ -134,7 +134,7 @@ void serial_write(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->count = count;
 }
 
-void serial_close(BAUD_RESOURCE *res) {
+void serial_close(SNIFF_RESOURCE *res) {
   res->error = NULL;
   HANDLE handle = res->handle;
   res->handle = INVALID_HANDLE_VALUE;

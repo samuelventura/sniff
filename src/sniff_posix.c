@@ -11,7 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-void serial_open(BAUD_RESOURCE *res, int speed) {
+void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   res->error = NULL;
   struct termios fdt;
   memset(&fdt, 0, sizeof(fdt));
@@ -21,7 +21,7 @@ void serial_open(BAUD_RESOURCE *res, int speed) {
     res->error = "Path formatting failed";
     return;
   }
-  res->fd = open(res->path, O_RDWR | O_NOCTTY);
+  res->fd = open(res->path, flags);
   if (res->fd < 0) {
     res->error = "open failed";
     return;
@@ -88,7 +88,7 @@ void serial_open(BAUD_RESOURCE *res, int speed) {
   }
 }
 
-void serial_available(BAUD_RESOURCE *res) {
+void serial_available(SNIFF_RESOURCE *res) {
   res->error = NULL;
   size_t count = 0;
   if (ioctl(res->fd, FIONREAD, &count) < 0) {
@@ -98,7 +98,7 @@ void serial_available(BAUD_RESOURCE *res) {
   res->count = count;
 }
 
-void serial_read(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
+void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->error = NULL;
   int count = read(res->fd, buffer, size);
 
@@ -115,7 +115,7 @@ void serial_read(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->count = count;
 }
 
-void serial_write(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
+void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->error = NULL;
   int count = write(res->fd, buffer, size);
 
@@ -132,7 +132,7 @@ void serial_write(BAUD_RESOURCE *res, unsigned char *buffer, COUNT size) {
   res->count = count;
 }
 
-void serial_close(BAUD_RESOURCE *res) {
+void serial_close(SNIFF_RESOURCE *res) {
   res->error = NULL;
   int fd = res->fd;
   res->fd = -1;
