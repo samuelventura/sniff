@@ -10,14 +10,13 @@ Elixir Serial Port NIF
 
   ```elixir
   def deps do
-    [{:sniff, "~> 0.1.4"}]
+    [{:sniff, "~> 0.1.5"}]
   end
   ```
 
 ## Development
 
   - Testing requires two null modem serial ports configured in `test/test_helper.exs`
-  - Use clang-format atom package to format C code
   - Test against the build server farm with:
   ```bash
   ./farm.sh remote
@@ -43,7 +42,7 @@ No support provided other than ensuring compilation and basic interactive testin
 
 Future
 
-- [ ] Binary distro to shield dependants from devenv setup
+- [ ] Binary distro to avoid devenv setup
 - [ ] Ensure farm.sh handles local.hex --force
 - [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
@@ -53,6 +52,10 @@ Future
     - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
 
+0.1.5
+
+- [x] Upgraded ex_doc to compile with latest elixir
+- [x] Test serial port names detection on unixes
 - [x] Fixed binary leak when serial_read fails
 - [x] Separated darwin and linux baudrate files
 
