@@ -92,7 +92,7 @@ defmodule Sniff.Mixfile do
         "LICENSE"
       ],
       maintainers: ["Samuel Ventura"],
-      licenses: ["Apache 2.0"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/samuelventura/sniff/"}
     ]
   end
