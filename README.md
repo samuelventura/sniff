@@ -6,13 +6,20 @@ Elixir Serial Port NIF
 
 ## Installation and Usage
 
-  1. Add `sniff` to your list of dependencies in `mix.exs`:
+  Add `sniff` to your list of dependencies in `mix.exs`:
 
   ```elixir
   def deps do
     [{:sniff, "~> 0.1.6"}]
   end
   ```
+
+## Test
+
+```bash
+# script to setup socat ttys
+./test.sh
+```
 
 ## Windows
 
