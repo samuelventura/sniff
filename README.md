@@ -10,7 +10,7 @@ Elixir Serial Port NIF
 
   ```elixir
   def deps do
-    [{:sniff, "~> 0.1.6"}]
+    [{:sniff, "~> 0.1.7"}]
   end
   ```
 
