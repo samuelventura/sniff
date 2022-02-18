@@ -3,7 +3,6 @@
 #include <windows.h>
 
 void serial_open(SNIFF_RESOURCE *res, int speed) {
-  res->error = NULL;
   DCB dcb;
   FillMemory(&dcb, sizeof(dcb), 0);
   res->handle = INVALID_HANDLE_VALUE;
@@ -89,7 +88,6 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
 }
 
 void serial_available(SNIFF_RESOURCE *res) {
-  res->error = NULL;
   COMSTAT baudStat;
 
   if (!ClearCommError(res->handle, NULL, &baudStat)) {
@@ -101,7 +99,6 @@ void serial_available(SNIFF_RESOURCE *res) {
 }
 
 void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
-  res->error = NULL;
   DWORD count = 0;
 
   if (!ReadFile(res->handle, buffer, size, &count, NULL)) {
@@ -118,7 +115,6 @@ void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
 }
 
 void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
-  res->error = NULL;
   DWORD count = 0;
 
   if (!WriteFile(res->handle, buffer, size, &count, NULL)) {
@@ -135,7 +131,6 @@ void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
 }
 
 void serial_close(SNIFF_RESOURCE *res) {
-  res->error = NULL;
   HANDLE handle = res->handle;
   res->handle = INVALID_HANDLE_VALUE;
 

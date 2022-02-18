@@ -7,7 +7,6 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
 }
 
 int serial_baud(int speed) {
-
   switch (speed) {
     case 50: return B50;
     case 75: return B75;

@@ -2,7 +2,7 @@ defmodule Sniff.LeakTest do
   use ExUnit.Case
   alias Sniff.TTY
 
-  # check nothing leaks
+  # check leaks by comparing initial and final memory
   # this test wont detect a enif_alloc_binary leak!
   test "leak test" do
     tty0 = TTY.tty0()

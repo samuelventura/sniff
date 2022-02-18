@@ -13,7 +13,7 @@
 #else
 #include <termios.h>
 #define COUNT int
-#define PADSIZE 5 //  /dev/
+#define PADSIZE 0 // absolutes only
 int serial_baud(int speed);
 #endif
 
@@ -27,7 +27,7 @@ typedef struct SNIFF_RESOURCE {
   const char* error;
   char path[MAXPATH + 1];
   char device[MAXPATH + 1];
-  char config[3 + 1];
+  char config[3 + 1]; // 8N1 | 7E1 | 7O1
 } SNIFF_RESOURCE;
 
 void serial_open(SNIFF_RESOURCE *res, int speed);

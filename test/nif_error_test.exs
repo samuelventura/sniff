@@ -34,8 +34,9 @@ defmodule Sniff.ErrorTest do
   end
 
   defp bin(size) do
-    for _i <- 0..(size - 1), into: "" do
+    for _i <- 1..size, into: [] do
       "*"
     end
+    |> :erlang.iolist_to_binary()
   end
 end

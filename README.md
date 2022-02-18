@@ -17,8 +17,12 @@ Elixir Serial Port NIF
 ## Test
 
 ```bash
-# script to setup socat ttys
+# test with socat ttys
 ./test.sh
+# test with custom ttys (null modem)
+export TTY0="/dev/ttyUSB0"
+export TTY1="/dev/ttyUSB1"
+mix test
 ```
 
 ## Windows
@@ -47,6 +51,10 @@ Future
     - Allow using a different make file for each unix platform
     - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
+
+0.1.7
+
+- [x] Auto close monitor and test
 
 0.1.6
 

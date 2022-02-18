@@ -12,7 +12,6 @@
 #include <unistd.h>
 
 void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
-  res->error = NULL;
   struct termios fdt;
   memset(&fdt, 0, sizeof(fdt));
   res->fd = -1;
@@ -39,10 +38,6 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   fdt.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
   fdt.c_iflag &= ~(INLCR | IGNCR | ICRNL | IXON | IXOFF | IXANY);
   fdt.c_oflag &= ~(ONLCR | OCRNL | OPOST);
-
-  // options.c_iflag &= ~(INLCR | IGNCR | ICRNL | IXON | IXOFF);
-  // options.c_oflag &= ~(ONLCR | OCRNL);
-  // options.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
  
   int baud = serial_baud(speed);
   if (baud > 0) {
@@ -92,7 +87,6 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
 }
 
 void serial_available(SNIFF_RESOURCE *res) {
-  res->error = NULL;
   size_t count = 0;
   if (ioctl(res->fd, FIONREAD, &count) < 0) {
     res->error = "ioctl failed";
@@ -102,41 +96,32 @@ void serial_available(SNIFF_RESOURCE *res) {
 }
 
 void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
-  res->error = NULL;
   int count = read(res->fd, buffer, size);
-
   if (count < 0) {
     res->error = "read failed";
     return;
   }
-
   if (size != count) {
     res->error = "read mismatch";
     return;
   }
-
   res->count = count;
 }
 
 void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
-  res->error = NULL;
   int count = write(res->fd, buffer, size);
-
   if (count < 0) {
     res->error = "write failed";
     return;
   }
-
   if (size != count) {
     res->error = "write mismatch";
     return;
   }
-
   res->count = count;
 }
 
 void serial_close(SNIFF_RESOURCE *res) {
-  res->error = NULL;
   int fd = res->fd;
   res->fd = -1;
   if (fd < 0) {
