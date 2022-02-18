@@ -48,7 +48,7 @@ defmodule Sniff.Mixfile do
   def project do
     [
       app: :sniff,
-      version: "0.1.5",
+      version: "0.1.6",
       elixir: "~> 1.3",
       compilers: [:nif | Mix.compilers()],
       build_embedded: Mix.env() == :prod,
