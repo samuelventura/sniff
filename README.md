@@ -4,7 +4,7 @@ Elixir Serial Port NIF
 
 **Notice:** sniff focuses in the native interface to serial ports. For higher level serial port access see [baud](https://github.com/samuelventura/baud).
 
-## Installation and Usage
+## Installation
 
   Add `sniff` to your list of dependencies in `mix.exs`:
 
@@ -13,6 +13,20 @@ Elixir Serial Port NIF
     [{:sniff, "~> 0.1.7"}]
   end
   ```
+
+## Usage
+
+```elixir
+#this echo sample requires a loopback plug
+iex(1)> {:ok, nid} = Sniff.open("/dev/ttyUSB0", 9600, "8N1")
+{:ok, #Reference<0.83505167.3498704899.238160>}
+iex(2)> Sniff.write(nid, "hello")
+:ok
+iex(3)> Sniff.read(nid)
+{:ok, "hello"}
+iex(4)> Sniff.close(nid)
+:ok
+```
 
 ## Test
 
