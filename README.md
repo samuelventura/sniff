@@ -110,9 +110,6 @@ Future
 
 ## Research
 
-- Support udoo neo
-- Support beaglebone black
-- Support raspberry pi 3 B
 - Bypass the 0.1s minimum granularity on posix systems
 - Higher baud rates support for posix and win32
 - DTR/RTS control and CTS/DSR monitoring
