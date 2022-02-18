@@ -2,7 +2,7 @@
 
 Elixir Serial Port NIF
 
-**Notice:** sniff focuses in the native interface to serial ports. For high level serial port access see [baud](https://github.com/samuelventura/baud).
+**Notice:** sniff focuses in the native interface to serial ports. For higher level serial port access see [baud](https://github.com/samuelventura/baud).
 
 ## Installation and Usage
 
@@ -12,14 +12,6 @@ Elixir Serial Port NIF
   def deps do
     [{:sniff, "~> 0.1.6"}]
   end
-  ```
-
-## Development
-
-  - Testing requires two null modem serial ports configured in `test/test_helper.exs`
-  - Test against the build server farm with:
-  ```bash
-  ./farm.sh remote
   ```
 
 ## Windows
@@ -36,26 +28,25 @@ Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Foll
 
 ## MacOS
 
-No support provided other than ensuring compilation and basic interactive testing. 
-
-```bash
-sudo dseditgroup -o edit -a samuel -t user admin
-sudo dseditgroup -o edit -a samuel -t user wheel
-```
+Give yourself access to serial ports with `sudo dseditgroup -o edit -a samuel -t user wheel`.
 
 ## Roadmap
 
 Future
 
 - [ ] Binary distro to avoid devenv setup
-- [ ] Ensure farm.sh handles local.hex --force
-- [ ] Document build server farm setup
 - [ ] Cleanup windows compilation warnings
-- [ ] Pass test serial port thru environment variables
 - [ ] Requirements to migrate to elixir_make:
     - Allow using a different make file for each unix platform
     - Pass the BUILD_PATH to the makefile
     - Pass the ERTS_HOME to the makefile
+
+0.1.6
+
+- [x] Fixed raw mode to avoid byte 15 swallow in macos
+- [x] Testing with fake socat ttys
+- [x] Requires full posix serial port path
+- [x] Pass test serial port thru environment variables
 
 0.1.5
 
