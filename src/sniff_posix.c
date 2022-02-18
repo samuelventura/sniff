@@ -36,11 +36,14 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   }
 
   fdt.c_cflag |= CLOCAL | CREAD;
-  fdt.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-  fdt.c_iflag &= ~(INLCR | ICRNL); // disable 0x0D <-> 0x0A translation in Linux
-  fdt.c_iflag &= ~(IXON | IXOFF | IXANY);
-  fdt.c_oflag &= ~OPOST;
+  fdt.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+  fdt.c_iflag &= ~(INLCR | IGNCR | ICRNL | IXON | IXOFF | IXANY);
+  fdt.c_oflag &= ~(ONLCR | OCRNL | OPOST);
 
+  // options.c_iflag &= ~(INLCR | IGNCR | ICRNL | IXON | IXOFF);
+  // options.c_oflag &= ~(ONLCR | OCRNL);
+  // options.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+ 
   int baud = serial_baud(speed);
   if (baud > 0) {
     cfsetispeed(&fdt, baud);
