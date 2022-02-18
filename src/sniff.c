@@ -131,6 +131,9 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc,
   if (r > 0) {
     res->error = NULL;
     serial_close(res);
+    const char *error = "owner process no longer alive";
+    return enif_make_tuple2(env, atom_er,
+                            enif_make_string(env, error, ERL_NIF_LATIN1));
   } else if (r < 0) {
     const char *error = "enif_monitor_process failed";
     return enif_make_tuple2(env, atom_er,
