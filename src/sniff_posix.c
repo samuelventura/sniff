@@ -16,7 +16,7 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   struct termios fdt;
   memset(&fdt, 0, sizeof(fdt));
   res->fd = -1;
-  int count = snprintf(res->path, MAXPATH + 1, "/dev/%s", res->device);
+  int count = snprintf(res->path, MAXPATH + 1, "%s", res->device);
   if (count <= 0 || count > MAXPATH) {
     res->error = "Path formatting failed";
     return;
