@@ -1,23 +1,26 @@
 defmodule Sniff do
   @moduledoc """
-    Elixir Serial Port NIF.
+  Elixir Serial Port NIF.
 
-    ```elixir
-    #this echo sample requires a loopback plug
-    iex(1)> {:ok, nid} = Sniff.open("/dev/ttyUSB0", 9600, "8N1")
-    {:ok, #Reference<0.83505167.3498704899.238160>}
-    iex(2)> Sniff.write(nid, "hello")
-    :ok
-    iex(3)> Sniff.read(nid)
-    {:ok, "hello"}
-    iex(4)> Sniff.close(nid)
-    :ok
-    ```
+  ```elixir
+  #this echo sample requires a loopback plug
+  iex(1)> {:ok, nid} = Sniff.open("/dev/ttyUSB0", 9600, "8N1")
+  {:ok, #Reference<0.83505167.3498704899.238160>}
+  iex(2)> Sniff.write(nid, "hello")
+  :ok
+  iex(3)> Sniff.read(nid)
+  {:ok, "hello"}
+  iex(4)> Sniff.close(nid)
+  :ok
+  ```
+
+  The Serial Port is auto closed if its owner process exits.
   """
 
   @compile {:autoload, false}
   @on_load :init
 
+  @doc false
   def init() do
     nif =
       case :os.type() do
@@ -30,16 +33,16 @@ defmodule Sniff do
   end
 
   @doc """
-    Opens the NIF.
+    Opens the Serial Port.
 
-    Returns `:ok` | `{:er, reason}`.
+    Returns `{:ok, nid}` | `{:er, reason}`.
   """
   def open(_device, _speed, _config) do
     :erlang.nif_error("NIF library not loaded")
   end
 
   @doc """
-    Read from the NIF (non blocking).
+    Reads from the Serial Port (non blocking).
 
     Returns `{:ok, data}` | `{:er, reason}`.
   """
@@ -48,7 +51,7 @@ defmodule Sniff do
   end
 
   @doc """
-    Writes to the NIF.
+    Writes to the Serial Port.
 
     Returns `:ok` | `{:er, reason}`.
   """
@@ -57,7 +60,7 @@ defmodule Sniff do
   end
 
   @doc """
-    Closes the NIF.
+    Closes the Serial Port.
 
     Returns `:ok` | `{:er, reason}`.
   """
