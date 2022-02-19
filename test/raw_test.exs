@@ -1,4 +1,4 @@
-defmodule Sniff.CrudTest do
+defmodule Sniff.RawTest do
   use ExUnit.Case
   alias Sniff.TTY
 

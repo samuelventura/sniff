@@ -1,4 +1,4 @@
-defmodule Sniff.KillTest do
+defmodule Sniff.AutoCloseTest do
   use ExUnit.Case
   alias Sniff.TTY
 
