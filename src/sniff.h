@@ -35,7 +35,7 @@ typedef struct SNIFF_RESOURCE {
   int closed;
   int listen;
   ErlNifPid self;
-  ErlNifTid thread;
+  pthread_t thread;
   char path[MAXPATH + 1];
   char device[MAXPATH + 1];
   char config[3 + 1]; // 8N1 | 7E1 | 7O1
@@ -49,5 +49,7 @@ const char* serial_available(SNIFF_RESOURCE *res, COUNT *pcount);
 const char* serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size, COUNT *pcount);
 const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
 const char* serial_block(SNIFF_RESOURCE *res);
+const char* serial_thread(SNIFF_RESOURCE *res, void *(*handler)(void *));
+const char* serial_exit(SNIFF_RESOURCE *res);
 
 #endif

@@ -12,11 +12,13 @@ const char* _serial_close(SNIFF_RESOURCE *res) {
   //enif_fprintf(stdout, "_serial_close\n");
   if (res->open > 0) {
     if (res->closed == 0) {
+      //exit thread first then close to
+      //avoid posix fd potential reuse
+      if (res->listen > 0) {
+        serial_exit(res);
+      }
       const char* error = serial_close(res);
       res->closed = 1;
-      if (res->listen > 0) {
-        //enif_thread_join(res->thread, NULL);
-      }
       return error;
     }
   }
@@ -249,8 +251,6 @@ static void* nif_thread(void *ptr) {
   ERL_NIF_TERM term_self;
   atom_sniff = enif_make_atom(env, "sniff");
   term_self = enif_make_pid(env, &res->self);
-  int r = enif_send(NULL, &(res->self), NULL, term_self);
-  enif_fprintf(stdout, "enif_send %d\n", r);
 
   const char* error = serial_block(res);
   if (error == NULL) {
@@ -258,9 +258,8 @@ static void* nif_thread(void *ptr) {
       ErlNifBinary bin;
       if (!enif_alloc_binary(256, &bin)) { break; }
       COUNT count = 0;
-      enif_fprintf(stdout, "serial_read...\n");
       error = serial_read(res, bin.data, (COUNT)bin.size, &count);
-      enif_fprintf(stdout, "serial_read %d %s\n", count, error);
+      // enif_fprintf(stdout, "serial_read %d %s\n", count, error);
       if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
       if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
       ERL_NIF_TERM msg = enif_make_tuple3(env, atom_sniff, term_self, enif_make_binary(env, &bin));
@@ -270,7 +269,6 @@ static void* nif_thread(void *ptr) {
 
   enif_clear_env(env);
   
-  enif_fprintf(stdout, "nif_thread exit\n");
   return NULL;
 }
 
@@ -297,9 +295,10 @@ static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Already listening", ERL_NIF_LATIN1));
   }
-  if (enif_thread_create("SNIFF_THREAD", &res->thread, nif_thread, (void*)res, NULL)!=0) {
+  const char *error = serial_thread(res, nif_thread);
+  if (error != NULL) {
     return enif_raise_exception(
-        env, enif_make_string(env, "enif_thread_create failed", ERL_NIF_LATIN1));
+        env, enif_make_string(env, error, ERL_NIF_LATIN1));
   }
   res->listen = 1;
   return atom_ok;
@@ -307,7 +306,6 @@ static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
 
 static ERL_NIF_TERM nif_close(ErlNifEnv *env, int argc,
                               const ERL_NIF_TERM argv[]) {
-  enif_fprintf(stdout, "nif_close\n");
   if (argc != 1) {
     return enif_make_tuple2(
         env, atom_er,

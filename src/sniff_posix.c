@@ -138,3 +138,16 @@ const char* serial_close(SNIFF_RESOURCE *res) {
   }
   return NULL;
 }
+
+const char* serial_thread(SNIFF_RESOURCE *res, void *(*handler)(void *)) {
+  if (pthread_create(&res->thread, NULL, handler, (void*)res)!=0) {
+    return "pthread_create failed";
+  }
+  return NULL;
+}
+
+const char* serial_exit(SNIFF_RESOURCE *res) {
+  pthread_cancel(res->thread);
+  pthread_join(res->thread, NULL);
+  return NULL;
+}
