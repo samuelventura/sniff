@@ -37,13 +37,16 @@ iex(4)> Sniff.close(nid)
 export TTY0="/dev/ttyUSB0"
 export TTY1="/dev/ttyUSB1"
 mix test
+#in Windows
+#requires COM98/COM99 com0com ports
+test.bat
 ```
 
 ## Windows
 
 Install `Visual C++ 2015 Build Tools` by one of the following methods:
 - Download and install [visualcppbuildtools_full.exe](http://landinghub.visualstudio.com/visual-cpp-build-tools)
-- Thru [Chocolatey](https://chocolatey.org/) `choco install VisualCppBuildTools`.
+- With [Chocolatey](https://chocolatey.org/) `choco install VisualCppBuildTools`.
 
 From the Windows run command launch `cmd /K c:\Users\samuel\Desktop\sniff\setenv.bat` adjusting your code location accordingly.
 
@@ -129,4 +132,5 @@ Future
 - DTR/RTS control and CTS/DSR monitoring
 - Unit test 8N1 7E1 7O1 and baud rate setup against a confirmed gauge
 - Posix async and Windows overlapped
+- _CRT_SECURE_NO_WARNINGS and strncpy_s suggestion in Windows
 - Buffer discarding

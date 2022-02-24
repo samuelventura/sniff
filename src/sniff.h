@@ -16,7 +16,7 @@
 #define PADSIZE 0 // absolutes only
 int serial_baud(int speed);
 #endif
-
+ 
 typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
