@@ -60,6 +60,15 @@ defmodule Sniff do
   end
 
   @doc """
+    Setups async Serial Port input. Sends a `{:data, data}` message to owner process on new input.
+
+    Returns `:ok` | `{:er, reason}`.
+  """
+  def listen(_nid) do
+    :erlang.nif_error("NIF library not loaded")
+  end
+
+  @doc """
     Closes the Serial Port.
 
     Returns `:ok` | `{:er, reason}`.

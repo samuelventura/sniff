@@ -2,6 +2,8 @@
 #ifndef _SNIFF_H_
 #define _SNIFF_H_
 
+#include "erl_nif.h"
+
 #define UNUSED(x) (void)(x)
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAXPATH 255
@@ -17,25 +19,35 @@
 int serial_baud(int speed);
 #endif
 
+#ifdef _WIN32
+#define OPEN_ERROR INVALID_HANDLE_VALUE
+#else
+#define OPEN_ERROR -1
+#endif
+
 typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
   #else
   int fd;
   #endif
-  COUNT count;
-  const char* error;
+  int open;
+  int closed;
+  int listen;
+  ErlNifPid self;
+  ErlNifTid thread;
   char path[MAXPATH + 1];
   char device[MAXPATH + 1];
   char config[3 + 1]; // 8N1 | 7E1 | 7O1
 } SNIFF_RESOURCE;
 
-void serial_open(SNIFF_RESOURCE *res, int speed);
-void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags);
-void serial_close(SNIFF_RESOURCE *res);
-void serial_release(SNIFF_RESOURCE *res);
-void serial_available(SNIFF_RESOURCE *res);
-void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
-void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
+const char* serial_open(SNIFF_RESOURCE *res, int speed);
+const char* serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags);
+const char* serial_close(SNIFF_RESOURCE *res);
+const char* serial_release(SNIFF_RESOURCE *res);
+const char* serial_available(SNIFF_RESOURCE *res, COUNT *pcount);
+const char* serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size, COUNT *pcount);
+const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size);
+const char* serial_block(SNIFF_RESOURCE *res);
 
 #endif

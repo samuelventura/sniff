@@ -10,28 +10,24 @@
 #include <sys/time.h>
 #include <termios.h>
 #include <unistd.h>
+#include <pthread.h>
 
-void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
+const char* serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   struct termios fdt;
   memset(&fdt, 0, sizeof(fdt));
-  res->fd = -1;
   int count = snprintf(res->path, MAXPATH + 1, "%s", res->device);
   if (count <= 0 || count > MAXPATH) {
-    res->error = "Path formatting failed";
-    return;
+    return "Path formatting failed";
   }
   res->fd = open(res->path, flags);
   if (res->fd < 0) {
-    res->error = "open failed";
-    return;
+    return "open failed";
   }
   if (isatty(res->fd) < 0) {
-    res->error = "isatty failed";
-    return;
+    return "isatty failed";
   }
   if (tcgetattr(res->fd, &fdt) < 0) {
-    res->error = "tcgetattr failed";
-    return;
+    return "tcgetattr failed";
   }
 
   fdt.c_cflag |= CLOCAL | CREAD;
@@ -44,8 +40,7 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
     cfsetispeed(&fdt, baud);
     cfsetospeed(&fdt, baud);
   } else {
-    res->error = "Invalid speed";
-    return;
+    return "Invalid speed";
   }
 
   // config
@@ -72,8 +67,7 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
     fdt.c_iflag |= INPCK;
     fdt.c_iflag |= ISTRIP;
   } else {
-    res->error = "Invalid config";
-    return;
+    return "Invalid config";
   }
 
   // non-blocking
@@ -81,55 +75,66 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   fdt.c_cc[VMIN] = 0;
 
   if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
-    res->error = "tcsetattr failed";
-    return;
+    return "tcsetattr failed";
   }
+  return NULL;
 }
 
-void serial_available(SNIFF_RESOURCE *res) {
-  size_t count = 0;
+const char* serial_available(SNIFF_RESOURCE *res, COUNT *pcount) {
+  int count = 0;
   if (ioctl(res->fd, FIONREAD, &count) < 0) {
-    res->error = "ioctl failed";
-    return;
+    return "ioctl failed";
   }
-  res->count = count;
+  *pcount = count;
+  return NULL;
 }
 
-void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
+const char* serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size, COUNT *pcount) {
   int count = read(res->fd, buffer, size);
   if (count < 0) {
-    res->error = "read failed";
-    return;
+    return "read failed";
   }
+  *pcount = count;
   if (size != count) {
-    res->error = "read mismatch";
-    return;
+    return "read mismatch";
   }
-  res->count = count;
+  return NULL;
 }
 
-void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
+const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   int count = write(res->fd, buffer, size);
   if (count < 0) {
-    res->error = "write failed";
-    return;
+    return "write failed";
   }
   if (size != count) {
-    res->error = "write mismatch";
-    return;
+    return "write mismatch";
   }
-  res->count = count;
+  return NULL;
 }
 
-void serial_close(SNIFF_RESOURCE *res) {
-  int fd = res->fd;
-  res->fd = -1;
-  if (fd < 0) {
-    res->error = "fd already closed";
-    return;
+const char* serial_block(SNIFF_RESOURCE *res) {
+  struct termios fdt;
+  memset(&fdt, 0, sizeof(fdt));
+
+  if (tcgetattr(res->fd, &fdt) < 0) {
+    return "tcgetattr failed";
   }
-  if (close(fd) < 0) {
-    res->error = "close failed";
-    return;
+    // block until at least one
+  fdt.c_cc[VTIME] = 0;
+  fdt.c_cc[VMIN] = 1;
+
+  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
+    return "tcsetattr failed";
+  }  
+  return NULL;
+}
+
+const char* serial_close(SNIFF_RESOURCE *res) {
+  if (res->closed > 0) {
+    return "already closed";
   }
+  if (close(res->fd) < 0) {
+    return "close failed";
+  }
+  return NULL;
 }

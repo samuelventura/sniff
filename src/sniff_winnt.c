@@ -2,24 +2,20 @@
 #include <stdio.h>
 #include <windows.h>
 
-void serial_open(SNIFF_RESOURCE *res, int speed) {
+const char* serial_open(SNIFF_RESOURCE *res, int speed) {
   DCB dcb;
   FillMemory(&dcb, sizeof(dcb), 0);
-  res->handle = INVALID_HANDLE_VALUE;
   int count = snprintf(res->path, MAXPATH + 1, "//./%s", res->device);
   if (count <= 0 || count > MAXPATH) {
-    res->error = "Path formatting failed";
-    return;
+    return "Path formatting failed";
   }
   res->handle = CreateFile(res->path, GENERIC_READ | GENERIC_WRITE, 0, 0,
                            OPEN_EXISTING, 0, 0);
   if (res->handle == INVALID_HANDLE_VALUE) {
-    res->error = "CreateFile failed";
-    return;
+    return "CreateFile failed";
   }
   if (!GetCommState(res->handle, &dcb)) {
-    res->error = "GetCommState failed";
-    return;
+    return "GetCommState failed";
   }
 
   dcb.DCBlength = sizeof(DCB);
@@ -49,8 +45,7 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
   } else if (speed == 256000) {
     dcb.BaudRate = CBR_256000;
   } else {
-    res->error = "Invalid speed";
-    return;
+    return "Invalid speed";
   }
 
   // config
@@ -64,8 +59,7 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
     dcb.ByteSize = 7;
     dcb.Parity = ODDPARITY;
   } else {
-    res->error = "Invalid config";
-    return;
+    return "Invalid config";
   }
 
   // completely non-blocking read
@@ -77,70 +71,73 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
   ct.WriteTotalTimeoutMultiplier = 0;
 
   if (!SetCommTimeouts(res->handle, &ct)) {
-    res->error = "SetCommTimeouts failed";
-    return;
+    return "SetCommTimeouts failed";
   }
 
   if (!SetCommState(res->handle, &dcb)) {
-    res->error = "SetCommState failed";
-    return;
+    return "SetCommState failed";
   }
+
+  return NULL;
 }
 
-void serial_available(SNIFF_RESOURCE *res) {
+const char* serial_available(SNIFF_RESOURCE *res, COUNT *pcount) {
   COMSTAT baudStat;
 
   if (!ClearCommError(res->handle, NULL, &baudStat)) {
-    res->error = "ClearCommError failed";
-    return;
+    return "ClearCommError failed";
   }
 
-  res->count = baudStat.cbInQue;
+  *pcount = baudStat.cbInQue;
+
+  return NULL;
 }
 
-void serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
+const char* serial_read(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size, COUNT *pcount) {
   DWORD count = 0;
 
   if (!ReadFile(res->handle, buffer, size, &count, NULL)) {
-    res->error = "ReadFile failed";
-    return;
+    return "ReadFile failed";
   }
+
+  *pcount = count;
 
   if (size != count) {
-    res->error = "ReadFile mismatch";
-    return;
+    return "ReadFile mismatch";
   }
-
-  res->count = count;
+  
+  return NULL;
 }
 
-void serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
+const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size) {
   DWORD count = 0;
 
   if (!WriteFile(res->handle, buffer, size, &count, NULL)) {
-    res->error = "WriteFile failed";
-    return;
+    return "WriteFile failed";
   }
 
   if (size != count) {
-    res->error = "WriteFile mismatch";
-    return;
+    return "WriteFile mismatch";
   }
 
-  res->count = count;
+  return NULL;
 }
 
-void serial_close(SNIFF_RESOURCE *res) {
+const char* serial_block(SNIFF_RESOURCE *res) {
+  return "Not implemented";
+}
+
+const char* serial_close(SNIFF_RESOURCE *res) {
   HANDLE handle = res->handle;
   res->handle = INVALID_HANDLE_VALUE;
 
   if (handle == INVALID_HANDLE_VALUE) {
-    res->error = "Handle already closed";
-    return;
+    return "Handle already closed";
   }
 
   if (!CloseHandle(handle)) {
-    res->error = "CloseHandle failed";
-    return;
+    return "CloseHandle failed";
   }
+
+  return NULL;
 }

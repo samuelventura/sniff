@@ -31,6 +31,14 @@ defmodule Sniff.ErrorTest do
     {:er, 'Argument 1 is not a binary'} = Sniff.write(nid0, nil)
     {:er, 'Argument 0 is not a resource'} = Sniff.close(nil)
     :ok = Sniff.close(nid0)
+    {:er, 'Already closed'} = Sniff.read(nid0)
+    {:er, 'Already closed'} = Sniff.write(nid0, "")
+    {:er, 'Already closed'} = Sniff.close(nid0)
+    {:ok, nid0} = Sniff.open(tty0, 115_200, "8N1")
+    :ok = Sniff.listen(nid0)
+    {:er, 'Already listening'} = Sniff.listen(nid0)
+    {:er, 'Already listening'} = Sniff.read(nid0)
+    :ok = Sniff.close(nid0)
   end
 
   defp bin(size) do
