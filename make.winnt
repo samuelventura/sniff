@@ -2,11 +2,12 @@
 TARGET	= priv\sniff_winnt.dll
 BUILD	= "$(BUILD_PATH)\lib\sniff\$(TARGET)"
 SOURCES = src\sniff_winnt.c src\sniff.c
+HEADERS = src\sniff.h
 OBJDIR  = obj\winnt
 
 all: $(BUILD)
 
-$(TARGET): $(SOURCES)
+$(TARGET): $(SOURCES) $(HEADERS)
 	if not exist $(OBJDIR) mkdir $(OBJDIR)
 	cl /W4 /LD /MD /I"$(ERTS_HOME)\INCLUDE" /Fo$(OBJDIR)\ /Fe$(TARGET) $(SOURCES)
 

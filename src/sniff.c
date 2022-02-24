@@ -7,6 +7,14 @@
 ErlNifResourceType *RES_TYPE;
 ERL_NIF_TERM atom_ok;
 ERL_NIF_TERM atom_er;
+ERL_NIF_TERM atom_nil;
+ERL_NIF_TERM sniff_term;
+
+// ****************************************************************
+// CRITICAL: changing .h files won't trigger a rebuild all the c files.
+// generating crashes because of the changes in struct definitions 
+// make sure the makefile list all the files both *.c and *.h
+// ****************************************************************
 
 //socat maybe the cause closing the fd wont
 //awake the reading thread.
@@ -18,6 +26,7 @@ const char* _serial_close(SNIFF_RESOURCE *res) {
       //avoid posix fd potential reuse
       if (res->listen > 0) {
         serial_exit(res);
+        enif_free_env(res->env);
       }
       const char* error = serial_close(res);
       res->closed = 1;
@@ -60,6 +69,8 @@ static int load(ErlNifEnv *env, void **priv, ERL_NIF_TERM load_info) {
   if (open_resource(env) == -1) return -1;
   atom_ok = enif_make_atom(env, "ok");
   atom_er = enif_make_atom(env, "er");
+  atom_nil = enif_make_atom(env, "nil");
+  sniff_term = enif_make_atom(env, "sniff");
   return 0;
 }
 
@@ -135,6 +146,8 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc,
   res->device[device.size] = 0;
   res->config[config.size] = 0;
   res->fd = OPEN_ERROR;
+  res->env = NULL;
+  res->mid = atom_nil;
   res->open = 0;
   res->closed = 0;
   res->listen = 0;
@@ -242,16 +255,7 @@ static ERL_NIF_TERM nif_write(ErlNifEnv *env, int argc,
 static void* nif_thread(void *ptr) {
   SNIFF_RESOURCE *res;
   res = (SNIFF_RESOURCE *)ptr;
-  ErlNifEnv *env;
-  if ((env = enif_alloc_env()) == NULL) {
-    enif_raise_exception(
-        env, enif_make_string(env, "enif_alloc_env failed", ERL_NIF_LATIN1));
-  }
-  ERL_NIF_TERM atom_sniff;
-  ERL_NIF_TERM term_self;
-  atom_sniff = enif_make_atom(env, "sniff");
-  term_self = enif_make_pid(env, &res->self);
-
+  ErlNifEnv *env = res ->env;
   const char* error = serial_block(res);
   if (error == NULL) {
     while (1) {
@@ -262,15 +266,10 @@ static void* nif_thread(void *ptr) {
       //enif_fprintf(stdout, "serial_read %d %s\n", count, error);
       if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
       if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
-      ERL_NIF_TERM msg = enif_make_tuple3(env, atom_sniff, term_self, enif_make_binary(env, &bin));
+      ERL_NIF_TERM msg = enif_make_tuple3(env, sniff_term, res->mid, enif_make_binary(env, &bin));
       enif_send(NULL, &res->self, NULL, msg);
     }
   }
-
-  //FIXME not being freed because of pthread_cancel
-  //this leak wont be catched by the leak test which
-  //only looks into the current process memory data
-  enif_free_env(env);
   
   return NULL;
 }
@@ -298,11 +297,19 @@ static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Already listening", ERL_NIF_LATIN1));
   }
+  ErlNifEnv *penv;
+  if ((penv = enif_alloc_env()) == NULL) {
+    enif_raise_exception(
+        env, enif_make_string(env, "enif_alloc_env failed", ERL_NIF_LATIN1));
+  }
   const char *error = serial_thread(res, nif_thread);
   if (error != NULL) {
+    enif_free_env(penv);
     return enif_raise_exception(
         env, enif_make_string(env, error, ERL_NIF_LATIN1));
   }
+  res->env = penv;
+  res->mid = enif_make_copy(penv, argv[1]);
   res->listen = 1;
   return atom_ok;
 }

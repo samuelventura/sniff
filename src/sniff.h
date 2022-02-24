@@ -36,8 +36,10 @@ typedef struct SNIFF_RESOURCE {
   int listen;
   ErlNifPid self;
   pthread_t thread;
-  char path[MAXPATH + 1];
+  ErlNifEnv *env;
+  ERL_NIF_TERM mid;
   char device[MAXPATH + 1];
+  char path[MAXPATH + 1];
   char config[3 + 1]; // 8N1 | 7E1 | 7O1
 } SNIFF_RESOURCE;
 

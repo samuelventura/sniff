@@ -8,6 +8,7 @@ PRVDIR	 = priv
 
 TARGET	= priv/sniff_linux.so
 SOURCES = src/sniff_linux.c src/sniff_posix.c src/sniff.c
+HEADERS = src/sniff.h
 
 OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
@@ -15,7 +16,7 @@ OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 all: $(TARGET)
 
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(HEADERS)
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -o $@ -c $<
 

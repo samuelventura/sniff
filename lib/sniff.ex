@@ -64,8 +64,12 @@ defmodule Sniff do
 
     Returns `:ok` | `{:er, reason}`.
   """
-  def listen(_nid, _mid \\ nil) do
+  def listen(_nid, _mid) do
     :erlang.nif_error("NIF library not loaded")
+  end
+
+  def listen(nid) do
+    listen(nid, nid)
   end
 
   @doc """

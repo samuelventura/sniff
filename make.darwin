@@ -15,7 +15,7 @@ OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 all: $(TARGET)
 
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c $(HEADERS)
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -o $@ -c $<
 

@@ -2,8 +2,8 @@
 #include <termios.h>
 #include <fcntl.h>
 
-void serial_open(SNIFF_RESOURCE *res, int speed) {
-  serial_open_flags(res, speed, O_RDWR | O_NOCTTY);
+const char* serial_open(SNIFF_RESOURCE *res, int speed) {
+  return serial_open_flags(res, speed, O_RDWR | O_NOCTTY);
 }
 
 int serial_baud(int speed) {
