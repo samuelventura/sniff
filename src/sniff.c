@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+#include <unistd.h>
+#include <poll.h>
 
 ErlNifResourceType *RES_TYPE;
 ERL_NIF_TERM atom_ok;
@@ -26,8 +28,9 @@ const char* _serial_close(SNIFF_RESOURCE *res) {
       //exit thread first then close to
       //avoid posix fd potential reuse
       if (res->listen > 0) {
-        enif_fprintf(stdout, "%lld serial_exit...\n", current_timestamp());
+        close(res->pipes[0]);
         serial_exit(res);
+        close(res->pipes[1]);
         enif_free_env(res->env1);
         enif_free_env(res->env2);
       }
@@ -257,25 +260,33 @@ static ERL_NIF_TERM nif_write(ErlNifEnv *env, int argc,
 }
 
 static void* nif_thread(void *ptr) {
-  enif_fprintf(stdout, "%lld nif_thread\n", current_timestamp());
   SNIFF_RESOURCE *res;
   res = (SNIFF_RESOURCE *)ptr;
   ErlNifEnv *env = res->env2;
   const char* error = serial_block(res);
   if (error == NULL) {
+    struct pollfd fds[2];
+    fds[0].fd = res->fd;
+    fds[1].fd = res->pipes[1];
+    fds[0].events = POLLIN;
+    fds[1].events = POLLIN;
+
     while (1) {
-      ErlNifBinary bin;
-      if (!enif_alloc_binary(256, &bin)) { break; }
-      COUNT count = 0;
-      enif_fprintf(stdout, "%lld serial_read...\n", current_timestamp());
-      error = serial_read(res, bin.data, (COUNT)bin.size, &count);
-      enif_fprintf(stdout, "%lld serial_read %d %s\n", current_timestamp(), count, error);
-      if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
-      if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
-      ERL_NIF_TERM mid = enif_make_copy(env, res->mid);
-      ERL_NIF_TERM msg = enif_make_tuple3(env, sniff_term, mid, enif_make_binary(env, &bin));
-      enif_send(NULL, &res->self, NULL, msg);
-      enif_clear_env(env);
+      poll(fds, 2, -1);
+      if (fds[0].revents & POLLIN) {
+        ErlNifBinary bin;
+        if (!enif_alloc_binary(256, &bin)) { break; }
+        COUNT count = 0;
+        error = serial_read(res, bin.data, (COUNT)bin.size, &count);
+        // enif_fprintf(stdout, "%lld serial_read %d %s\n", current_timestamp(), count, error);
+        if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
+        if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
+        ERL_NIF_TERM mid = enif_make_copy(env, res->mid);
+        ERL_NIF_TERM msg = enif_make_tuple3(env, sniff_term, mid, enif_make_binary(env, &bin));
+        enif_send(NULL, &res->self, NULL, msg);
+        enif_clear_env(env);
+      }
+      if (fds[1].revents & POLLHUP) { break; }
     }
   }
   
@@ -312,8 +323,15 @@ static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
   }
   ErlNifEnv *penv2;
   if ((penv2 = enif_alloc_env()) == NULL) {
+    enif_free_env(penv1);
     enif_raise_exception(
         env, enif_make_string(env, "enif_alloc_env failed", ERL_NIF_LATIN1));
+  }
+  if (pipe(res->pipes)!=0) {
+    enif_free_env(penv1);
+    enif_free_env(penv2);
+    enif_raise_exception(
+        env, enif_make_string(env, "pipe failed", ERL_NIF_LATIN1));
   }
   const char *error = serial_thread(res, nif_thread);
   if (error != NULL) {

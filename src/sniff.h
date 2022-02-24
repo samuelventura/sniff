@@ -34,6 +34,7 @@ typedef struct SNIFF_RESOURCE {
   int open;
   int closed;
   int listen;
+  int pipes[2];
   ErlNifPid self;
   pthread_t thread;
   ErlNifEnv *env1;

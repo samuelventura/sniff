@@ -130,9 +130,9 @@ const char* serial_thread(SNIFF_RESOURCE *res, void *(*handler)(void *)) {
 }
 
 const char* serial_exit(SNIFF_RESOURCE *res) {
-  serial_nonblock(res);
+  //serial_nonblock(res);
   //FIXME pthread_cancel wont work in macos
-  pthread_cancel(res->thread);
+  //pthread_cancel(res->thread);
   pthread_join(res->thread, NULL);
   return NULL;
 }
