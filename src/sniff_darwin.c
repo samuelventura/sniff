@@ -1,9 +1,56 @@
 #include "sniff.h"
 #include <termios.h>
 #include <fcntl.h>
+#include <string.h>
 
 const char* serial_open(SNIFF_RESOURCE *res, int speed) {
   return serial_open_flags(res, speed, O_RDWR | O_NOCTTY | O_NONBLOCK);
+}
+
+const char* serial_block(SNIFF_RESOURCE *res) {
+  struct termios fdt;
+  memset(&fdt, 0, sizeof(fdt));
+  
+  // block until at least one
+  fdt.c_cc[VTIME] = 0;
+  fdt.c_cc[VMIN] = 1;
+
+  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
+    return "tcsetattr failed";
+  }  
+
+  int flags = fcntl(res->fd, F_GETFL);
+  flags &= ~O_NONBLOCK;
+  fcntl(res->fd, F_SETFL, flags);
+
+  if (tcgetattr(res->fd, &fdt) < 0) {
+    return "tcgetattr failed";
+  }
+
+  return NULL;
+}
+
+const char* serial_nonblock(SNIFF_RESOURCE *res) {
+  struct termios fdt;
+  memset(&fdt, 0, sizeof(fdt));
+  
+  // block until at least one
+  fdt.c_cc[VTIME] = 0;
+  fdt.c_cc[VMIN] = 0;
+
+  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
+    return "tcsetattr failed";
+  }  
+
+  int flags = fcntl(res->fd, F_GETFL);
+  flags |= O_NONBLOCK;
+  fcntl(res->fd, F_SETFL, flags);
+
+  if (tcgetattr(res->fd, &fdt) < 0) {
+    return "tcgetattr failed";
+  }
+
+  return NULL;
 }
 
 int serial_baud(int speed) {

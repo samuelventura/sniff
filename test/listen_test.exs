@@ -9,6 +9,7 @@ defmodule Sniff.ListenTest do
     {:ok, nid1} = Sniff.open(tty1, 115_200, "8N1")
 
     :ok = Sniff.listen(nid0)
+
     Sniff.write(nid1, "1")
     assert_receive {:sniff, ^nid0, "1"}, 200
     Sniff.write(nid1, "1")
@@ -16,7 +17,5 @@ defmodule Sniff.ListenTest do
 
     :ok = Sniff.close(nid0)
     :ok = Sniff.close(nid1)
-
-    :timer.sleep(200)
   end
 end

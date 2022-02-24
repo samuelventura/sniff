@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 
 ErlNifResourceType *RES_TYPE;
 ERL_NIF_TERM atom_ok;
@@ -25,8 +26,10 @@ const char* _serial_close(SNIFF_RESOURCE *res) {
       //exit thread first then close to
       //avoid posix fd potential reuse
       if (res->listen > 0) {
+        enif_fprintf(stdout, "%lld serial_exit...\n", current_timestamp());
         serial_exit(res);
-        enif_free_env(res->env);
+        enif_free_env(res->env1);
+        enif_free_env(res->env2);
       }
       const char* error = serial_close(res);
       res->closed = 1;
@@ -146,7 +149,8 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc,
   res->device[device.size] = 0;
   res->config[config.size] = 0;
   res->fd = OPEN_ERROR;
-  res->env = NULL;
+  res->env1 = NULL;
+  res->env2 = NULL;
   res->mid = atom_nil;
   res->open = 0;
   res->closed = 0;
@@ -253,21 +257,25 @@ static ERL_NIF_TERM nif_write(ErlNifEnv *env, int argc,
 }
 
 static void* nif_thread(void *ptr) {
+  enif_fprintf(stdout, "%lld nif_thread\n", current_timestamp());
   SNIFF_RESOURCE *res;
   res = (SNIFF_RESOURCE *)ptr;
-  ErlNifEnv *env = res ->env;
+  ErlNifEnv *env = res->env2;
   const char* error = serial_block(res);
   if (error == NULL) {
     while (1) {
       ErlNifBinary bin;
       if (!enif_alloc_binary(256, &bin)) { break; }
       COUNT count = 0;
+      enif_fprintf(stdout, "%lld serial_read...\n", current_timestamp());
       error = serial_read(res, bin.data, (COUNT)bin.size, &count);
-      //enif_fprintf(stdout, "serial_read %d %s\n", count, error);
+      enif_fprintf(stdout, "%lld serial_read %d %s\n", current_timestamp(), count, error);
       if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
       if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
-      ERL_NIF_TERM msg = enif_make_tuple3(env, sniff_term, res->mid, enif_make_binary(env, &bin));
+      ERL_NIF_TERM mid = enif_make_copy(env, res->mid);
+      ERL_NIF_TERM msg = enif_make_tuple3(env, sniff_term, mid, enif_make_binary(env, &bin));
       enif_send(NULL, &res->self, NULL, msg);
+      enif_clear_env(env);
     }
   }
   
@@ -297,19 +305,26 @@ static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
         env, atom_er,
         enif_make_string(env, "Already listening", ERL_NIF_LATIN1));
   }
-  ErlNifEnv *penv;
-  if ((penv = enif_alloc_env()) == NULL) {
+  ErlNifEnv *penv1;
+  if ((penv1 = enif_alloc_env()) == NULL) {
+    enif_raise_exception(
+        env, enif_make_string(env, "enif_alloc_env failed", ERL_NIF_LATIN1));
+  }
+  ErlNifEnv *penv2;
+  if ((penv2 = enif_alloc_env()) == NULL) {
     enif_raise_exception(
         env, enif_make_string(env, "enif_alloc_env failed", ERL_NIF_LATIN1));
   }
   const char *error = serial_thread(res, nif_thread);
   if (error != NULL) {
-    enif_free_env(penv);
+    enif_free_env(penv1);
+    enif_free_env(penv2);
     return enif_raise_exception(
         env, enif_make_string(env, error, ERL_NIF_LATIN1));
   }
-  res->env = penv;
-  res->mid = enif_make_copy(penv, argv[1]);
+  res->env1 = penv1;
+  res->env2 = penv2;
+  res->mid = enif_make_copy(penv1, argv[1]);
   res->listen = 1;
   return atom_ok;
 }
@@ -347,3 +362,11 @@ static ErlNifFunc nif_funcs[] = {{"open", 3, nif_open, 0},
                                  {"close", 1, nif_close, 0}};
 
 ERL_NIF_INIT(Elixir.Sniff, nif_funcs, &load, &reload, &upgrade, NULL)
+
+long long current_timestamp() {
+    struct timeval te; 
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
+    return milliseconds;
+}

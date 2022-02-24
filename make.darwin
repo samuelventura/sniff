@@ -8,6 +8,7 @@ PRVDIR	 = priv
 
 TARGET	= priv/sniff_darwin.so
 SOURCES = src/sniff_darwin.c src/sniff_posix.c src/sniff.c
+HEADERS = src/sniff.h
 
 OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 

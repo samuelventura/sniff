@@ -112,23 +112,6 @@ const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size)
   return NULL;
 }
 
-const char* serial_block(SNIFF_RESOURCE *res) {
-  struct termios fdt;
-  memset(&fdt, 0, sizeof(fdt));
-
-  if (tcgetattr(res->fd, &fdt) < 0) {
-    return "tcgetattr failed";
-  }
-    // block until at least one
-  fdt.c_cc[VTIME] = 0;
-  fdt.c_cc[VMIN] = 1;
-
-  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
-    return "tcsetattr failed";
-  }  
-  return NULL;
-}
-
 const char* serial_close(SNIFF_RESOURCE *res) {
   if (res->closed > 0) {
     return "already closed";
@@ -147,6 +130,8 @@ const char* serial_thread(SNIFF_RESOURCE *res, void *(*handler)(void *)) {
 }
 
 const char* serial_exit(SNIFF_RESOURCE *res) {
+  serial_nonblock(res);
+  //FIXME pthread_cancel wont work in macos
   pthread_cancel(res->thread);
   pthread_join(res->thread, NULL);
   return NULL;

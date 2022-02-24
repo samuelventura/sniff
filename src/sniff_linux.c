@@ -6,6 +6,36 @@ const char* serial_open(SNIFF_RESOURCE *res, int speed) {
   return serial_open_flags(res, speed, O_RDWR | O_NOCTTY);
 }
 
+const char* serial_block(SNIFF_RESOURCE *res) {
+  struct termios fdt;
+  memset(&fdt, 0, sizeof(fdt));
+  
+  // block until at least one
+  fdt.c_cc[VTIME] = 0;
+  fdt.c_cc[VMIN] = 1;
+
+  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
+    return "tcsetattr failed";
+  }
+  
+  return NULL;
+}
+
+const char* serial_nonblock(SNIFF_RESOURCE *res) {
+  struct termios fdt;
+  memset(&fdt, 0, sizeof(fdt));
+  
+  // block until at least one
+  fdt.c_cc[VTIME] = 0;
+  fdt.c_cc[VMIN] = 0;
+
+  if (tcsetattr(res->fd, TCSANOW, &fdt) < 0) {
+    return "tcsetattr failed";
+  }
+
+  return NULL;
+}
+
 int serial_baud(int speed) {
   switch (speed) {
     case 50: return B50;
