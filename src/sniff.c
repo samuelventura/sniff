@@ -8,6 +8,8 @@ ErlNifResourceType *RES_TYPE;
 ERL_NIF_TERM atom_ok;
 ERL_NIF_TERM atom_er;
 
+//socat maybe the cause closing the fd wont
+//awake the reading thread.
 const char* _serial_close(SNIFF_RESOURCE *res) {
   //enif_fprintf(stdout, "_serial_close\n");
   if (res->open > 0) {
@@ -139,10 +141,8 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc,
   res->self = self;  
   res->open = 1;
   const char* error = serial_open(res, speed);
-  //return enif_make_tuple2(env, atom_er, enif_make_string(env, "HERE!", ERL_NIF_LATIN1));
   if (error != NULL) {
     _serial_close(res);
-    //report serial_open error
     return enif_make_tuple2(env, atom_er,
                             enif_make_string(env, error, ERL_NIF_LATIN1));
   }
@@ -259,7 +259,7 @@ static void* nif_thread(void *ptr) {
       if (!enif_alloc_binary(256, &bin)) { break; }
       COUNT count = 0;
       error = serial_read(res, bin.data, (COUNT)bin.size, &count);
-      // enif_fprintf(stdout, "serial_read %d %s\n", count, error);
+      //enif_fprintf(stdout, "serial_read %d %s\n", count, error);
       if (error != NULL && count <=0) { enif_release_binary(&bin); break; }
       if(!enif_realloc_binary(&bin, count)) { enif_release_binary(&bin); break; }
       ERL_NIF_TERM msg = enif_make_tuple3(env, atom_sniff, term_self, enif_make_binary(env, &bin));
@@ -267,14 +267,17 @@ static void* nif_thread(void *ptr) {
     }
   }
 
-  enif_clear_env(env);
+  //FIXME not being freed because of pthread_cancel
+  //this leak wont be catched by the leak test which
+  //only looks into the current process memory data
+  enif_free_env(env);
   
   return NULL;
 }
 
 static ERL_NIF_TERM nif_listen(ErlNifEnv *env, int argc,
                               const ERL_NIF_TERM argv[]) {
-  if (argc != 1) {
+  if (argc != 2) {
     return enif_make_tuple2(
         env, atom_er,
         enif_make_string(env, "Invalid argument count", ERL_NIF_LATIN1));
@@ -333,7 +336,7 @@ static ERL_NIF_TERM nif_close(ErlNifEnv *env, int argc,
 static ErlNifFunc nif_funcs[] = {{"open", 3, nif_open, 0},
                                  {"read", 1, nif_read, 0},
                                  {"write", 2, nif_write, 0},
-                                 {"listen", 1, nif_listen, 0},
+                                 {"listen", 2, nif_listen, 0},
                                  {"close", 1, nif_close, 0}};
 
 ERL_NIF_INIT(Elixir.Sniff, nif_funcs, &load, &reload, &upgrade, NULL)

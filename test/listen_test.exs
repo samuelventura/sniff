@@ -17,5 +17,7 @@ defmodule Sniff.ListenTest do
 
     :ok = Sniff.close(nid0)
     :ok = Sniff.close(nid1)
+
+    :timer.sleep(200)
   end
 end
