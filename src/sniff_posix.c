@@ -131,6 +131,30 @@ const char* serial_close(SNIFF_RESOURCE *res) {
   return NULL;
 }
 
+void* serial_thread(void *obj) {
+  SNIFF_RESOURCE *res = obj;
+  struct pollfd fds[2];
+  fds[0].fd = res->fd;
+  fds[1].fd = res->pipes[0];
+  fds[0].events = POLLIN;
+  fds[1].events = POLLHUP;
+
+  while (1) {
+    poll(fds, 2, -1);
+    if (fds[0].revents & POLLIN) {
+      COUNT size = 0;
+      COUNT count = 0;
+      serial_available(res, &size);
+      unsigned char data[size];
+      serial_read(res, data, size, &count);
+      res->send(res, data, count);
+    }
+    if (fds[1].revents != 0) { break; }
+  }
+  
+  return NULL;
+}
+
 const char* serial_listen_start(SNIFF_RESOURCE *res) {
   const char* error;
   if ((error = serial_block(res)) != NULL) {
@@ -146,34 +170,8 @@ const char* serial_listen_start(SNIFF_RESOURCE *res) {
 }
 
 const char* serial_listen_stop(SNIFF_RESOURCE *res) {
-  write(res->pipes[1], "*", 1);
   close(res->pipes[1]);
-  pthread_cancel(res->thread);
   pthread_join(res->thread, NULL);
   close(res->pipes[0]);
-  return NULL;
-}
-
-void* serial_thread(void *obj) {
-  SNIFF_RESOURCE *res = obj;
-  struct pollfd fds[2];
-  fds[0].fd = res->fd;
-  fds[1].fd = res->pipes[1];
-  fds[0].events = POLLIN;
-  fds[1].events = POLLIN | POLLHUP;
-
-  while (1) {
-    poll(fds, 2, -1);
-    if (fds[0].revents & POLLIN) {
-      COUNT size = 0;
-      COUNT count = 0;
-      serial_available(res, &size);
-      unsigned char data[size];
-      serial_read(res, data, size, &count);
-      res->send(res, data, count);
-    }
-    if (fds[1].revents & POLLHUP) { break; }
-  }
-  
   return NULL;
 }

@@ -59,7 +59,5 @@ const char* serial_listen_stop(SNIFF_RESOURCE *res);
 const char* serial_nonblock(SNIFF_RESOURCE *res);
 const char* serial_block(SNIFF_RESOURCE *res);
 int serial_baud(int speed);
-void* serial_thread(void *obj);
-long long current_timestamp();
 
 #endif
