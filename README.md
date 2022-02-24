@@ -45,7 +45,7 @@ Install `Visual C++ 2015 Build Tools` by one of the following methods:
 - Download and install [visualcppbuildtools_full.exe](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 - Thru [Chocolatey](https://chocolatey.org/) `choco install VisualCppBuildTools`.
 
-From the Windows run command launch `cmd /K c:\Users\samuel\Documents\github\sniff\setenv.bat` adjusting your code location accordingly.
+From the Windows run command launch `cmd /K c:\Users\samuel\Desktop\sniff\setenv.bat` adjusting your code location accordingly.
 
 ## Ubuntu
 
