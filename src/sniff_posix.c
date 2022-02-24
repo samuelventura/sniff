@@ -12,6 +12,15 @@
 #include <unistd.h>
 #include <pthread.h>
 
+const char* serial_valid_speed(int speed) {
+  int baud = serial_baud(speed);
+  if (baud > 0) {
+    return NULL;
+  } else {
+    return "Invalid speed";
+  }
+}
+
 const char* serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
   struct termios fdt;
   memset(&fdt, 0, sizeof(fdt));
@@ -122,17 +131,49 @@ const char* serial_close(SNIFF_RESOURCE *res) {
   return NULL;
 }
 
-const char* serial_thread(SNIFF_RESOURCE *res, void *(*handler)(void *)) {
-  if (pthread_create(&res->thread, NULL, handler, (void*)res)!=0) {
+const char* serial_listen_start(SNIFF_RESOURCE *res) {
+  const char* error;
+  if ((error = serial_block(res)) != NULL) {
+    return error;
+  }
+  if (pipe(res->pipes)==-1) {
+    return "pipe failed";
+  }
+  if (pthread_create(&res->thread, NULL, serial_thread, (void*)res)!=0) {
     return "pthread_create failed";
   }
   return NULL;
 }
 
-const char* serial_exit(SNIFF_RESOURCE *res) {
-  //serial_nonblock(res);
-  //FIXME pthread_cancel wont work in macos
-  //pthread_cancel(res->thread);
+const char* serial_listen_stop(SNIFF_RESOURCE *res) {
+  write(res->pipes[1], "*", 1);
+  close(res->pipes[1]);
+  pthread_cancel(res->thread);
   pthread_join(res->thread, NULL);
+  close(res->pipes[0]);
+  return NULL;
+}
+
+void* serial_thread(void *obj) {
+  SNIFF_RESOURCE *res = obj;
+  struct pollfd fds[2];
+  fds[0].fd = res->fd;
+  fds[1].fd = res->pipes[1];
+  fds[0].events = POLLIN;
+  fds[1].events = POLLIN | POLLHUP;
+
+  while (1) {
+    poll(fds, 2, -1);
+    if (fds[0].revents & POLLIN) {
+      COUNT size = 0;
+      COUNT count = 0;
+      serial_available(res, &size);
+      unsigned char data[size];
+      serial_read(res, data, size, &count);
+      res->send(res, data, count);
+    }
+    if (fds[1].revents & POLLHUP) { break; }
+  }
+  
   return NULL;
 }

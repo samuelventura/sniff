@@ -130,3 +130,12 @@ Future
 - Unit test 8N1 7E1 7O1 and baud rate setup against a confirmed gauge
 - Posix async and Windows overlapped
 - Buffer discarding
+- How often should a NIF environment be clear?
+
+## Lookout
+
+- Make sure *.h deps are properly set in make file or changes to it wont trigger recompilation of all *.c files generating crashes because different *.c files were compiled with different versions of the *.f files.
+- Socat fake ttys may behave differently on poll then real ttys.
+- File descriptors are reused in POSIX therefore it is not safe to close a FD (does not work either) to return from a blocking read within a thread because there is no way to tell if the FD is assigned to the original file or to a new one. A pipe plus poll may be used instead.
+- Writing safe async NIFs requires a lot to take in consideration. The port model seems to be a safer faster interfacing option after all mainly because resource clean up is warranty by the OS process.
+- enif_fprintf(stdout, "some debuging...\n"); is your friend.
