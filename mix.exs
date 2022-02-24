@@ -1,47 +1,3 @@
-defmodule Mix.Tasks.Compile.Nif do
-  def run(_) do
-    generate_env()
-
-    case :os.type() do
-      {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin")
-      {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux")
-      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt")
-    end
-
-    # ensure that generated files are copied to build directory
-    :ok = Mix.Project.build_structure()
-  end
-
-  def clean() do
-    generate_env()
-
-    case :os.type() do
-      {:unix, :darwin} -> 0 = Mix.Shell.IO.cmd("make -f make.darwin clean")
-      {:unix, :linux} -> 0 = Mix.Shell.IO.cmd("make -f make.linux clean")
-      {:win32, :nt} -> 0 = Mix.Shell.IO.cmd("nmake /f make.winnt clean")
-    end
-
-    :ok
-  end
-
-  defp generate_env() do
-    build = Mix.Project.build_path() |> fix_path_separator
-
-    erts =
-      Path.join([:code.root_dir(), 'erts-' ++ :erlang.system_info(:version)])
-      |> fix_path_separator
-
-    :ok = File.write("env.tmp", "BUILD_PATH=#{build}\nERTS_HOME=#{erts}")
-  end
-
-  defp fix_path_separator(path) do
-    case :os.type() do
-      {:win32, :nt} -> String.replace(path, "/", "\\")
-      _ -> path
-    end
-  end
-end
-
 defmodule Sniff.Mixfile do
   use Mix.Project
 
@@ -50,7 +6,8 @@ defmodule Sniff.Mixfile do
       app: :sniff,
       version: "0.1.7",
       elixir: "~> 1.3",
-      compilers: [:nif | Mix.compilers()],
+      make_clean: ["clean"],
+      compilers: [:elixir_make | Mix.compilers()],
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -66,6 +23,7 @@ defmodule Sniff.Mixfile do
 
   defp deps do
     [
+      {:elixir_make, "~> 0.4", runtime: false},
       {:ex_doc, "~> 0.28", only: :dev}
     ]
   end

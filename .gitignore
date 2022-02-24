@@ -7,4 +7,5 @@
 *.ez
 *.tmp
 *.tar
+*.obj
 .elixir_ls

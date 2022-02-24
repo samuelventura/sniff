@@ -23,7 +23,7 @@
 #else
 #define OPEN_ERROR -1
 #endif
-
+ 
 typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
