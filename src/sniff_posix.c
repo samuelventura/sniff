@@ -167,6 +167,8 @@ const char* serial_listen_start(SNIFF_RESOURCE *res) {
     return "pipe failed";
   }
   if (pthread_create(&res->thread, NULL, serial_thread, (void*)res)!=0) {
+    close(res->pipes[0]);
+    close(res->pipes[1]);
     return "pthread_create failed";
   }
   return NULL;

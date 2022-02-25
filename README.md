@@ -144,3 +144,4 @@ Future
 - Writing safe async NIFs requires a lot to take in consideration. The port model seems to be a safer faster interfacing option after all mainly because resource clean up is warranty by the OS process.
 - enif_fprintf(stdout, "some debuging...\n"); is your friend.
 - No matter how much effort is put into testing this NIF it wont be trusted as a port would.
+- enif_fprintf is your friend
