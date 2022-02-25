@@ -41,7 +41,7 @@ defmodule Sniff.Mixfile do
         "src",
         "test",
         "mix.*",
-        "make.*",
+        "Makefile.*",
         "*.exs",
         "*.sh",
         "*.bat",
