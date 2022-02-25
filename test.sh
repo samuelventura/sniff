@@ -18,5 +18,5 @@ if [[ "$SOCAT_TTY" == "true" ]]; then
   export TTY0="/tmp/tty.socat0"
   export TTY1="/tmp/tty.socat1"
 
-  mix test "$@"
+  mix test --trace "$@"
 fi

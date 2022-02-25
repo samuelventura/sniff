@@ -3,21 +3,12 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <poll.h>
 
 ErlNifResourceType *RES_TYPE;
 ERL_NIF_TERM atom_ok;
 ERL_NIF_TERM atom_er;
 ERL_NIF_TERM atom_nil;
 ERL_NIF_TERM sniff_term;
-
-long long current_timestamp() {
-    struct timeval te; 
-    gettimeofday(&te, NULL);
-    return te.tv_sec*1000LL + te.tv_usec/1000;
-}
 
 const char* serial_valid_config(char *buffer, COUNT size) {
   if (strncmp(buffer, "8N1", size) == 0) {
@@ -155,11 +146,17 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]
   }
   ERL_NIF_TERM resterm = enif_make_resource(env, res);
   enif_release_resource(res);
+  //windows warns and suggests using strncpy_s instead
   strncpy(res->device, (const char *)device.data, device.size);
   strncpy(res->config, (const char *)config.data, config.size);
   res->device[device.size] = 0;
   res->config[config.size] = 0;
-  res->fd = OPEN_ERROR;
+  #ifdef _WIN32
+  res->handle = INVALID_HANDLE_VALUE;
+  res->thread = NULL;
+  #else
+  res->fd = -1;
+  #endif
   res->env1 = NULL;
   res->env2 = NULL;
   res->mid = atom_nil;

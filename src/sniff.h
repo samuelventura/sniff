@@ -17,16 +17,11 @@
 #define COUNT int
 #define PADSIZE 0 // absolutes only
 #endif
-
-#ifdef _WIN32
-#define OPEN_ERROR INVALID_HANDLE_VALUE
-#else
-#define OPEN_ERROR -1
-#endif
  
 typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
+  HANDLE thread;
   #else
   int fd;
   int pipes[2];
@@ -59,5 +54,5 @@ const char* serial_listen_stop(SNIFF_RESOURCE *res);
 const char* serial_nonblock(SNIFF_RESOURCE *res);
 const char* serial_block(SNIFF_RESOURCE *res);
 int serial_baud(int speed);
-
+long long current_timestamp();
 #endif

@@ -12,6 +12,12 @@
 #include <unistd.h>
 #include <pthread.h>
 
+long long current_timestamp() {
+    struct timeval te; 
+    gettimeofday(&te, NULL);
+    return te.tv_sec*1000LL + te.tv_usec/1000;
+}
+
 const char* serial_valid_speed(int speed) {
   int baud = serial_baud(speed);
   if (baud > 0) {
@@ -122,9 +128,6 @@ const char* serial_write(SNIFF_RESOURCE *res, unsigned char *buffer, COUNT size)
 }
 
 const char* serial_close(SNIFF_RESOURCE *res) {
-  if (res->closed > 0) {
-    return "already closed";
-  }
   if (close(res->fd) < 0) {
     return "close failed";
   }
