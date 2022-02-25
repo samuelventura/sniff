@@ -145,50 +145,13 @@ const char* serial_close(SNIFF_RESOURCE *res) {
 DWORD WINAPI serial_thread(void *obj) {
   SNIFF_RESOURCE *res = obj;
   unsigned char data[256];
-  COUNT count = 0;
-  DWORD dwRes;
-  int state = 0;
-  OVERLAPPED osReader = {0};
-  osReader.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-  if (osReader.hEvent == NULL) {
-    enif_fprintf(stdout, "CreateEvent == NULL\n"); /*error*/
+  while (1) {
+    COUNT count = 0;
+    serial_read(res, data, 256, &count);
+    enif_fprintf(stdout, "serial_read out\n");
+    if (count == 0) break;
+    res->send(res, data, count);
   }
-  HANDLE handles[2] = {osReader.hEvent, res->event};
-  while (state >= 0) {
-    if (state == 0) {
-      if (!ReadFile(res->handle, data, 1, &count, &osReader)) {
-        if (GetLastError() != ERROR_IO_PENDING) 
-        { 
-          enif_fprintf(stdout, "GetLastError() != ERROR_IO_PENDING\n"); /*error*/ 
-          return 1;
-        } 
-        else { state = 1; }
-      }
-      else { res->send(res, data, count); }
-    }
-    if (state == 1) {
-      dwRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
-      switch(dwRes)
-      {
-        case WAIT_OBJECT_0:
-          if (!GetOverlappedResult(res->handle, &osReader, &count, FALSE))  
-          { enif_fprintf(stdout, "!GetOverlappedResult\n"); /*error*/ } 
-          else { res->send(res, data, count); }
-          state = 0;
-          break;
-        case WAIT_OBJECT_0 + 1:
-          state = -1;
-          break;
-        case WAIT_TIMEOUT:
-          enif_fprintf(stdout, "WAIT_TIMEOUT\n"); /*false trigger*/
-          break;
-        default:
-          enif_fprintf(stdout, "default\n"); /*error*/
-          break;
-      }
-    }
-  }
-  CloseHandle(osReader.hEvent);
   return 0;
 }
 
@@ -205,14 +168,6 @@ const char* serial_block(SNIFF_RESOURCE *res) {
     return "SetCommTimeouts failed";
   }
 
-  HANDLE handle = ReOpenFile(res->handle, GENERIC_READ | GENERIC_WRITE, 
-      0, FILE_FLAG_OVERLAPPED);
-  if (handle == INVALID_HANDLE_VALUE) {
-    enif_fprintf(stdout, "ReOpenFile GetLastError %d\n", GetLastError()); /*error*/
-    return "ReOpenFile failed";
-  }
-  res->handle = handle;
-
   return NULL;
 }
 
@@ -221,23 +176,17 @@ const char* serial_listen_start(SNIFF_RESOURCE *res) {
   if ((error = serial_block(res)) != NULL) {
     return error;
   }
-  res->event = CreateEvent(NULL, TRUE, FALSE, TEXT("ExitEvent")); 
-  if (res->event == NULL) {
-    return "CreateEvent failed";
-  }
   res->thread = CreateThread(NULL, 0, serial_thread, res, 0, NULL);
-  if (res->thread == NULL) {
-    CloseHandle(res->event);
+  if (!res->thread) {
     return "CreateThread failed";
   }
   return NULL;
 }
 
 const char* serial_listen_stop(SNIFF_RESOURCE *res) {
-  SetEvent(res->event);
-  //Sleep(1000);
+  //FIXME use something like posix poll
+  //ReOpenFile fails with 5 access denied
   TerminateThread(res->thread, 0);
   WaitForSingleObject(res->thread, INFINITE);
-  CloseHandle(res->event);
   return NULL;
 }

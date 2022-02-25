@@ -22,7 +22,6 @@ typedef struct SNIFF_RESOURCE {
   #ifdef _WIN32
   HANDLE handle;
   HANDLE thread;
-  HANDLE event;
   #else
   int fd;
   int pipes[2];

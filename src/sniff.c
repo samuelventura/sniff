@@ -154,7 +154,6 @@ static ERL_NIF_TERM nif_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]
   #ifdef _WIN32
   res->handle = INVALID_HANDLE_VALUE;
   res->thread = NULL;
-  res->event = NULL;
   #else
   res->fd = -1;
   #endif
