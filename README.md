@@ -42,7 +42,9 @@ mix test
 test.bat
 ```
 
-## Windows
+## Development
+
+### Windows
 
 Install `Visual C++ 2015 Build Tools` by one of the following methods:
 - Download and install [visualcppbuildtools_full.exe](http://landinghub.visualstudio.com/visual-cpp-build-tools)
@@ -50,11 +52,11 @@ Install `Visual C++ 2015 Build Tools` by one of the following methods:
 
 From the Windows run command launch `cmd /K c:\Users\samuel\Desktop\sniff\setenv.bat` adjusting your code location accordingly.
 
-## Ubuntu
+### Ubuntu
 
 Give yourself access to serial ports with `sudo gpasswd -s samuel dialout`. Follow the official Elixir installation instructions and install `build-essential erlang-dev` as well.
 
-## MacOS
+### MacOS
 
 Give yourself access to serial ports with `sudo dseditgroup -o edit -a samuel -t user wheel`.
 
