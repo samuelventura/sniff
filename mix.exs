@@ -4,7 +4,7 @@ defmodule Sniff.Mixfile do
   def project do
     [
       app: :sniff,
-      version: "0.1.7",
+      version: "0.1.8",
       elixir: "~> 1.3",
       make_clean: ["clean"],
       compilers: [:elixir_make | Mix.compilers()],

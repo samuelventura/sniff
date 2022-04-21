@@ -53,19 +53,42 @@ void serial_open(SNIFF_RESOURCE *res, int speed) {
     return;
   }
 
-  // config
-  if (strcmp(res->config, "8N1") == 0) {
-    dcb.ByteSize = 8;
-    dcb.Parity = NOPARITY;
-  } else if (strcmp(res->config, "7E1") == 0) {
-    dcb.ByteSize = 7;
-    dcb.Parity = EVENPARITY;
-  } else if (strcmp(res->config, "7O1") == 0) {
-    dcb.ByteSize = 7;
-    dcb.Parity = ODDPARITY;
-  } else {
-    res->error = "Invalid config";
-    return;
+  // config {8,7}{N,E,O}{1,2}
+    switch (res->config[0]) {
+    case '8':
+      dcb.ByteSize = 8;
+      break;
+    case '7':
+      dcb.ByteSize = 7;
+      break;
+    default:
+      res->error = "Invalid databits";
+      return;
+  }
+  switch (res->config[1]) {
+    case 'N':
+      dcb.Parity = NOPARITY;
+      break;
+    case 'E':
+      dcb.Parity = EVENPARITY;
+      break;
+    case 'O':
+      dcb.Parity = ODDPARITY;
+      break;
+    default:
+      res->error = "Invalid parity";
+      return;
+  }
+  switch (res->config[2]) {
+    case '1':
+      dcb.StopBits = ONESTOPBIT;
+      break;
+    case '2':
+      dcb.StopBits = TWOSTOPBITS;
+      break;
+    default:
+      res->error = "Invalid stopbits";
+      return;
   }
 
   // completely non-blocking read

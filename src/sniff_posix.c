@@ -48,32 +48,50 @@ void serial_open_flags(SNIFF_RESOURCE *res, int speed, int flags) {
     return;
   }
 
-  // config
-  if (strcmp(res->config, "8N1") == 0) {
-    fdt.c_cflag |= CS8;
-    fdt.c_cflag &= ~PARENB;
-    fdt.c_cflag &= ~CSTOPB;
-    fdt.c_cflag &= ~CSIZE;
-    fdt.c_cflag |= CS8;
-  } else if (strcmp(res->config, "7E1") == 0) {
-    fdt.c_cflag |= PARENB;
-    fdt.c_cflag &= ~PARODD;
-    fdt.c_cflag &= ~CSTOPB;
-    fdt.c_cflag &= ~CSIZE;
-    fdt.c_cflag |= CS7;
-    fdt.c_iflag |= INPCK;
-    fdt.c_iflag |= ISTRIP;
-  } else if (strcmp(res->config, "7O1") == 0) {
-    fdt.c_cflag |= PARENB;
-    fdt.c_cflag |= PARODD;
-    fdt.c_cflag &= ~CSTOPB;
-    fdt.c_cflag &= ~CSIZE;
-    fdt.c_cflag |= CS7;
-    fdt.c_iflag |= INPCK;
-    fdt.c_iflag |= ISTRIP;
-  } else {
-    res->error = "Invalid config";
-    return;
+  // config {8,7}{N,E,O}{1,2}
+  switch (res->config[0]) {
+    case '8':
+      fdt.c_cflag &= ~CSIZE;
+      fdt.c_cflag |= CS8;
+      break;
+    case '7':
+      fdt.c_cflag &= ~CSIZE;
+      fdt.c_cflag |= CS7;
+      break;
+    default:
+      res->error = "Invalid databits";
+      return;
+  }
+  switch (res->config[1]) {
+    case 'N':
+      fdt.c_cflag &= ~PARENB;
+      break;
+    case 'E':
+      fdt.c_cflag |= PARENB;
+      fdt.c_cflag &= ~PARODD;
+      fdt.c_iflag |= INPCK;
+      fdt.c_iflag |= ISTRIP;
+      break;
+    case 'O':
+      fdt.c_cflag |= PARENB;
+      fdt.c_cflag |= PARODD;
+      fdt.c_iflag |= INPCK;
+      fdt.c_iflag |= ISTRIP;
+      break;
+    default:
+      res->error = "Invalid parity";
+      return;
+  }
+  switch (res->config[2]) {
+    case '1':
+      fdt.c_cflag &= ~CSTOPB;
+      break;
+    case '2':
+      fdt.c_cflag |= CSTOPB;
+      break;
+    default:
+      res->error = "Invalid stopbits";
+      return;
   }
 
   // non-blocking

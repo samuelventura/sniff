@@ -18,6 +18,7 @@ Elixir Serial Port NIF
 
 ```elixir
 #this echo sample requires a loopback plug
+#supported config combinations {8,7}{N,E,O}{1,2}
 iex(1)> {:ok, nid} = Sniff.open("/dev/ttyUSB0", 9600, "8N1")
 {:ok, #Reference<0.83505167.3498704899.238160>}
 iex(2)> Sniff.write(nid, "hello")
@@ -66,14 +67,15 @@ Future
 
 - [ ] Binary distro to avoid devenv setup
 - [ ] Cleanup windows compilation warnings
-- [ ] Requirements to migrate to elixir_make:
-    - Allow using a different make file for each unix platform
-    - Pass the BUILD_PATH to the makefile
-    - Pass the ERTS_HOME to the makefile
+
+0.1.8
+
+- [x] Support {8,7}{N,E,O}{1,2} configs
 
 0.1.7
 
 - [x] Auto close monitor and test
+- [x] Migrated to elixir_make
 
 0.1.6
 
@@ -136,3 +138,7 @@ Future
 - Posix async and Windows overlapped
 - _CRT_SECURE_NO_WARNINGS and strncpy_s suggestion in Windows
 - Buffer discarding
+
+## References
+
+- https://www.cmrr.umn.edu/~strupp/serial.html

@@ -4,6 +4,7 @@ defmodule Sniff do
 
   ```elixir
   #this echo sample requires a loopback plug
+  #supported config combinations {8,7}{N,E,O}{1,2}
   iex(1)> {:ok, nid} = Sniff.open("/dev/ttyUSB0", 9600, "8N1")
   {:ok, #Reference<0.83505167.3498704899.238160>}
   iex(2)> Sniff.write(nid, "hello")

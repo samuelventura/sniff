@@ -24,7 +24,9 @@ defmodule Sniff.ErrorTest do
     end
 
     {:er, 'Invalid speed'} = Sniff.open(tty0, 9601, "8N1")
-    {:er, 'Invalid config'} = Sniff.open(tty0, 9600, "8NX")
+    {:er, 'Invalid databits'} = Sniff.open(tty0, 9600, "XN1")
+    {:er, 'Invalid parity'} = Sniff.open(tty0, 9600, "8X1")
+    {:er, 'Invalid stopbits'} = Sniff.open(tty0, 9600, "8NX")
     {:ok, nid0} = Sniff.open(tty0, 115_200, "8N1")
     {:er, 'Argument 0 is not a resource'} = Sniff.read(nil)
     {:er, 'Argument 0 is not a resource'} = Sniff.write(nil, nil)
